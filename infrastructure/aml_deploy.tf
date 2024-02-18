@@ -18,8 +18,10 @@ module "network" {
 
   rg_name  = module.resource_group.name
   location = module.resource_group.location
-  name = "ali"
-  vnet_address_space  = "10.1.0.0/22"
+  
+  prefix  = var.prefix
+  postfix = var.postfix
+  vnet_address_space  = var.vnet_address_space
 }
 
 # Azure Machine Learning workspace
