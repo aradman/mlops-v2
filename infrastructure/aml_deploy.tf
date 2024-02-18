@@ -21,6 +21,8 @@ module "network" {
   
   prefix  = var.prefix
   postfix = var.postfix
+  env = var.environment
+  
   vnet_address_space  = var.vnet_address_space
 }
 
