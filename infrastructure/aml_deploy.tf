@@ -18,10 +18,6 @@ module "network" {
 
   rg_name  = module.resource_group.name
   location = module.resource_group.location
-
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment
   name = "ali"
   vnet_address_space  = "10.1.0.0/22"
 
