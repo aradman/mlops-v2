@@ -12,6 +12,21 @@ module "resource_group" {
   tags = local.tags
 }
 
+# Network
+module "network" {
+  source = "./modules/network"
+
+  location = var.location
+
+  prefix  = var.prefix
+  postfix = var.postfix
+  env = var.environment
+  vnet_address_space  = "10.1.0.0/22"
+
+  tags = local.tags
+}
+
+
 # Azure Machine Learning workspace
 
 module "aml_workspace" {
