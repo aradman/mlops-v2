@@ -20,10 +20,7 @@ module "network" {
   location = module.resource_group.location
   name = "ali"
   vnet_address_space  = "10.1.0.0/22"
-
-  tags = local.tags
 }
-
 
 # Azure Machine Learning workspace
 
