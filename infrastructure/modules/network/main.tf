@@ -24,7 +24,7 @@ resource "azurerm_subnet" "azure_firewall" {
 resource "azurerm_subnet" "shared" {
   name                 = "SharedSubnet"
   virtual_network_name = azurerm_virtual_network.core.name
-  resource_group_name  = var.resource_group_name
+  resource_group_name  = var.rg_name
   address_prefixes     = [local.shared_services_subnet_address_prefix]
   # notice that private endpoints do not adhere to NSG rules
   enforce_private_link_endpoint_network_policies = true
