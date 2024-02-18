@@ -22,8 +22,7 @@ module "network" {
   prefix  = var.prefix
   postfix = var.postfix
   env = var.environment
-  name = var.name
-  
+  name = "ali"
   vnet_address_space  = "10.1.0.0/22"
 
   tags = local.tags
