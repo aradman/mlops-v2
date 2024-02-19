@@ -35,6 +35,17 @@ variable "hns_enabled" {
   default     = true
 }
 
+variable "private_dns_zone_blob_id" {
+  type        = string
+  description = "Blob private dns zone id"
+}
+
+variable "pe_subnet_id" {
+  type        = string
+  description = "Private endpoint subnet id"
+}
+
+
 variable "firewall_virtual_network_subnet_ids" {
   default = []
 }
