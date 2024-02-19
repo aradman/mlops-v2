@@ -36,18 +36,6 @@ module "subnet" {
   subntet_scoring_cidr = "10.0.3.0/24"
 }
 
-module "virtual_network" {
-  source = "./modules/vnet"
-
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
-  
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment 
-  vnet_cidr = "10.0.0.0/24"
-}
-
 # Private DNS
 module "private_dns" {
   source = "./modules/private-dns"
