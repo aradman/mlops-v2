@@ -40,7 +40,7 @@ resource "azurerm_private_endpoint" "blob_storage_private_endpoint_with_dns" {
     private_dns_zone_ids = [var.private_dns_zone_blob_id]
   }
 
-  tags = local.tags
+  tags = var.tags
   lifecycle {
     ignore_changes = [
       tags
