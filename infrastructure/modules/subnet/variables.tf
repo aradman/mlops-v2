@@ -3,6 +3,10 @@ variable "rg_name" {
   description = "Resource group name"
 }
 
+variable "vnet_name" {
+  description = "Name of the virtual network"
+}
+
 variable "subnet_pe_cidr" {
   type        = string
   description = "Private endpoint subnet CIDR"
