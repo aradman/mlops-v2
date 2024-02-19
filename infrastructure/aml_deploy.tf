@@ -25,6 +25,15 @@ module "virtual_network" {
   vnet_cidr = "10.0.0.0/24"
 }
 
+# Private DNS
+module "private_dns" {
+  source = "./modules/private-dns"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+    
+}
+
 # Azure Machine Learning workspace
 
 module "aml_workspace" {
