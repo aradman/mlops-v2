@@ -31,9 +31,9 @@ module "subnet" {
 
   rg_name  = module.resource_group.name
   vnet_name = module.virtual_network.name
-  subntet_pe_cidr = "10.0.1.0/24"
-  subntet_training_cidr = "10.0.2.0/24"
-  subntet_scoring_cidr = "10.0.3.0/24"
+  subnet_pe_cidr = "10.0.1.0/24"
+  subnet_training_cidr = "10.0.2.0/24"
+  subnet_scoring_cidr = "10.0.3.0/24"
 }
 
 # Private DNS
