@@ -1,6 +1,5 @@
 variable "location" {}
 variable "rg_name" {}
-variable "vnet_address_space" {}
 variable "prefix" {
   type        = string
   description = "Prefix for the module name"
