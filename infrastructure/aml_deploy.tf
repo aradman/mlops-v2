@@ -30,7 +30,6 @@ module "private_dns" {
   source = "./modules/private-dns"
 
   rg_name  = module.resource_group.name
-  location = module.resource_group.location
     
 }
 
