@@ -31,9 +31,9 @@ module "subnet" {
 
   rg_name  = module.resource_group.name
   vnet_name = module.virtual_network.name
-  subnet_pe_cidr = "10.0.1.0/24"
-  subnet_training_cidr = "10.0.2.0/24"
-  subnet_scoring_cidr = "10.0.3.0/24"
+  pe_subnet_cidr = "10.0.1.0/24"
+  training_subnet_cidr = "10.0.2.0/24"
+  scoring_subnet_cidr = "10.0.3.0/24"
 }
 
 # Private DNS
@@ -43,6 +43,28 @@ module "private_dns" {
   rg_name  = module.resource_group.name
   vnet_id = module.virtual_network.id
     
+}
+
+# Storage account
+
+module "storage_account_aml" {
+  source = "./modules/storage-account"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+
+
+  prefix  = var.prefix
+  postfix = var.postfix
+  env = var.environment
+
+  hns_enabled                         = false
+  pe_subnet_id                        = module.subnet.pe_subnet_id
+  private_dns_zone_blob_id            = module.private_dns.private_dns_zone_blob_id
+  # firewall_bypass                     = ["AzureServices"]
+  # firewall_virtual_network_subnet_ids = []
+
+  tags = local.tags
 }
 
 # Azure Machine Learning workspace
@@ -64,25 +86,6 @@ module "aml_workspace" {
 
   enable_aml_computecluster = var.enable_aml_computecluster
   storage_account_name      = module.storage_account_aml.name
-
-  tags = local.tags
-}
-
-# Storage account
-
-module "storage_account_aml" {
-  source = "./modules/storage-account"
-
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
-
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment
-
-  hns_enabled                         = false
-  firewall_bypass                     = ["AzureServices"]
-  firewall_virtual_network_subnet_ids = []
 
   tags = local.tags
 }
