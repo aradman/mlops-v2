@@ -29,7 +29,7 @@ resource "azurerm_private_endpoint" "blob_storage_private_endpoint_with_dns" {
   subnet_id           = var.pe_subnet_id
 
   private_service_connection {
-    name                           = "${lazurerm_storage_account.blob.name}-plink-conn"
+    name                           = "${azurerm_storage_account.blob.name}-plink-conn"
     private_connection_resource_id = azurerm_storage_account.blob.id
     is_manual_connection           = false
     subresource_names              = ["blob"]
