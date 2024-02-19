@@ -22,7 +22,7 @@ module "virtual_network" {
   prefix  = var.prefix
   postfix = var.postfix
   env = var.environment 
-  vnet_cidr = "10.0.0.0/24"
+  vnet_cidr = "10.0.0.0/16"
 }
 
 # Subnets
