@@ -1,4 +1,4 @@
-resource "azurerm_subnet" "training_subnet" {
+resource "azurerm_subnet" "subnet_pe" {
   name                                           = "snet-private-endpoint"
   resource_group_name                            = var.rg_name  
   virtual_network_name                           = var.vnet_name
@@ -6,7 +6,7 @@ resource "azurerm_subnet" "training_subnet" {
   enforce_private_link_endpoint_network_policies = true
 }
 
-resource "azurerm_subnet" "management_subnet" {
+resource "azurerm_subnet" "subnet_training" {
   name                                           = "snet-training"
   resource_group_name                            = var.rg_name
   virtual_network_name                           = var.vnet_name
@@ -14,7 +14,7 @@ resource "azurerm_subnet" "management_subnet" {
   enforce_private_link_endpoint_network_policies = true
 }
 
-resource "azurerm_subnet" "management_subnet" {
+resource "azurerm_subnet" "subnet_scoring" {
   name                                           = "snet-scoring"
   resource_group_name                            = var.rg_name
   virtual_network_name                           = var.vnet_name
