@@ -30,7 +30,7 @@ module "private_dns" {
   source = "./modules/private-dns"
 
   rg_name  = module.resource_group.name
-  vnet_id = module.vnet.id
+  vnet_id = module.virtual_network.id
     
 }
 
