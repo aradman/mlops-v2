@@ -29,8 +29,3 @@ variable "enable_monitoring" {
 variable "client_secret" {
   description = "Service Principal Secret"
 }
-
-variable "vnet_address_space" {
-  type        = string
-  description = "VNET Address Space, such as '10.0.0.0/22'"
-}

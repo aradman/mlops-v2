@@ -13,17 +13,16 @@ module "resource_group" {
 }
 
 # Network
-module "network" {
-  source = "./modules/network"
+module "virtual_network" {
+  source = "./modules/vnet"
 
   rg_name  = module.resource_group.name
   location = module.resource_group.location
   
   prefix  = var.prefix
   postfix = var.postfix
-  env = var.environment
-  
-  vnet_address_space  = var.vnet_address_space
+  env = var.environment 
+  vnet_cidr = "10.0.0.0/24"
 }
 
 # Azure Machine Learning workspace
