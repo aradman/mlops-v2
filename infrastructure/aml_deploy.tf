@@ -12,7 +12,30 @@ module "resource_group" {
   tags = local.tags
 }
 
-# Network
+# Virtual Network
+module "virtual_network" {
+  source = "./modules/vnet"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+  
+  prefix  = var.prefix
+  postfix = var.postfix
+  env = var.environment 
+  vnet_cidr = "10.0.0.0/24"
+}
+
+# Subnets
+module "subnet" {
+  source = "./modules/subnet"
+
+  rg_name  = module.resource_group.name
+  vnet_name = module.virtual_network.name
+  subntet_pe_cidr = "10.0.1.0/24"
+  subntet_training_cidr = "10.0.2.0/24"
+  subntet_scoring_cidr = "10.0.3.0/24"
+}
+
 module "virtual_network" {
   source = "./modules/vnet"
 
