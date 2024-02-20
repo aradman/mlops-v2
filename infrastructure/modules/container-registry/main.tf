@@ -12,3 +12,29 @@ resource "azurerm_container_registry" "cr" {
 
   tags = var.tags
 }
+
+resource "azurerm_private_endpoint" "container_registry_private_endpoint_with_dns" {
+  name                = "${azurerm_container_registry.cr.name}-plink"
+  location            = var.location
+  resource_group_name = var.rg_name
+  subnet_id           = var.pe_subnet_id
+
+  private_service_connection {
+    name                           = "${azurerm_container_registry.cr.name}-plink-conn"
+    private_connection_resource_id = azurerm_container_registry.cr.id
+    is_manual_connection           = false
+    subresource_names              = ["registry"]
+  }
+
+  private_dns_zone_group {
+    name                 = "privatednszonegroupstorage"
+    private_dns_zone_ids = [var.private_dns_zone_blob_id]
+  }
+
+  tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}

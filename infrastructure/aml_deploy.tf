@@ -85,6 +85,24 @@ module "key_vault" {
   tags = local.tags
 }
 
+# Container registry
+
+module "container_registry" {
+  source = "./modules/container-registry"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+
+  prefix  = var.prefix
+  postfix = var.postfix
+  env = var.environment
+  pe_subnet_id                        = module.subnet.pe_subnet_id
+  private_dns_zone_acr_id            = module.private_dns.private_dns_zone_acr_id
+
+  tags = local.tags
+}
+
+
 # # Azure Machine Learning workspace
 
 # module "aml_workspace" {
@@ -114,21 +132,6 @@ module "key_vault" {
 
 # module "application_insights" {
 #   source = "./modules/application-insights"
-
-#   rg_name  = module.resource_group.name
-#   location = module.resource_group.location
-
-#   prefix  = var.prefix
-#   postfix = var.postfix
-#   env = var.environment
-
-#   tags = local.tags
-# }
-
-# # Container registry
-
-# module "container_registry" {
-#   source = "./modules/container-registry"
 
 #   rg_name  = module.resource_group.name
 #   location = module.resource_group.location
