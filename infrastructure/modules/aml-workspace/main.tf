@@ -30,7 +30,7 @@ resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
   }
 
   private_dns_zone_group {
-    name                 = "privatednszonegroupmlw"
+    name                 = "privatednszonegroup"
     private_dns_zone_ids = [var.private_dns_zone_mlw_api_id, var.private_dns_zone_notebook_id ]
   }
 

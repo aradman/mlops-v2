@@ -27,7 +27,7 @@ resource "azurerm_private_endpoint" "container_registry_private_endpoint_with_dn
   }
 
   private_dns_zone_group {
-    name                 = "privatednszonegroupstorage"
+    name                 = "privatednszonegroup"
     private_dns_zone_ids = [var.private_dns_zone_acr_id]
   }
 

@@ -9,7 +9,7 @@ locals {
   safe_postfix = replace(var.postfix, "-", "")
 }
 
-resource "azurerm_storage_account" "blob" {
+resource "azurerm_storage_account" "st" {
   name                     = "st${local.safe_prefix}${local.safe_postfix}${var.env}"
   resource_group_name      = var.rg_name
   location                 = var.location
@@ -22,15 +22,15 @@ resource "azurerm_storage_account" "blob" {
   
 }
 
-resource "azurerm_private_endpoint" "blob_storage_private_endpoint_with_dns" {
-  name                = "${azurerm_storage_account.blob.name}-plink"
+resource "azurerm_private_endpoint" "storage_account_blob_private_endpoint_with_dns" {
+  name                = "${azurerm_storage_account.st.name}-blob-plink"
   location            = var.location
   resource_group_name = var.rg_name
   subnet_id           = var.pe_subnet_id
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.blob.name}-plink-conn"
-    private_connection_resource_id = azurerm_storage_account.blob.id
+    name                           = "${azurerm_storage_account.st.name}-blob-plink-conn"
+    private_connection_resource_id = azurerm_storage_account.st.id
     is_manual_connection           = false
     subresource_names              = ["blob"]
   }
@@ -38,6 +38,32 @@ resource "azurerm_private_endpoint" "blob_storage_private_endpoint_with_dns" {
   private_dns_zone_group {
     name                 = "privatednszonegroupstorage"
     private_dns_zone_ids = [var.private_dns_zone_blob_id]
+  }
+
+  tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+resource "azurerm_private_endpoint" "storage_account_file_private_endpoint_with_dns" {
+  name                = "${azurerm_storage_account.st.name}-file-plink"
+  location            = var.location
+  resource_group_name = var.rg_name
+  subnet_id           = var.pe_subnet_id
+
+  private_service_connection {
+    name                           = "${azurerm_storage_account.st.name}-file-plink-conn"
+    private_connection_resource_id = azurerm_storage_account.st.id
+    is_manual_connection           = false
+    subresource_names              = ["file"]
+  }
+
+  private_dns_zone_group {
+    name                 = "privatednszonegroupstorage"
+    private_dns_zone_ids = [var.private_dns_zone_file_id]
   }
 
   tags = var.tags
