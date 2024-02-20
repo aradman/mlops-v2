@@ -44,7 +44,7 @@ resource "azurerm_subnet_network_security_group_association" "pe_nsg" {
   # list so we need to ensure the rules are deployed before the association
   depends_on = [
     azurerm_network_security_rule.pe_out_deny_all,
-    azurerm_subnet.pe_subnet_id,
+    azurerm_subnet.pe_subnet,
   ]
   timeouts {}
 }
