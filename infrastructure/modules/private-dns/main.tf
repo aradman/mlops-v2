@@ -1,12 +1,12 @@
-resource "azurerm_private_dns_zone" "private_dns_zone_aml_api" {
+resource "azurerm_private_dns_zone" "private_dns_zone_mlw_api" {
   name                = "privatelink.api.azureml.ms"
   resource_group_name = var.rg_name
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "aml_api" {
+resource "azurerm_private_dns_zone_virtual_network_link" "mlw_api" {
   name                  = "mlops-vnet-aml-api"
   resource_group_name   = var.rg_name
-  private_dns_zone_name = azurerm_private_dns_zone.private_dns_zone_aml_api.name
+  private_dns_zone_name = azurerm_private_dns_zone.private_dns_zone_mlw_api.name
   virtual_network_id    = var.vnet_id
 }
 

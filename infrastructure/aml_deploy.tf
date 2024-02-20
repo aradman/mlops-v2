@@ -96,7 +96,7 @@ module "container_registry" {
   prefix  = var.prefix
   postfix = var.postfix
   env = var.environment
-  pe_subnet_id                        = module.subnet.pe_subnet_id
+  pe_subnet_id                       = module.subnet.pe_subnet_id
   private_dns_zone_acr_id            = module.private_dns.private_dns_zone_acr_id
 
   tags = local.tags
@@ -121,6 +121,10 @@ module "aml_workspace" {
 
   enable_aml_computecluster = var.enable_aml_computecluster
   storage_account_name      = module.storage_account_aml.name
+
+  pe_subnet_id                       = module.subnet.pe_subnet_id
+  private_dns_zone_mlw_api_id            = module.private_dns.private_dns_zone_mlw_api_id
+  private_dns_zone_notebook_id            = module.private_dns.private_dns_zone_notebook_id
 
   tags = local.tags
 }

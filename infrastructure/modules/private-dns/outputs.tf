@@ -1,5 +1,5 @@
-output "private_dns_zone_aml_api_id" {
-  value = azurerm_private_dns_zone.private_dns_zone_aml_api.id
+output "private_dns_zone_mlw_api_id" {
+  value = azurerm_private_dns_zone.private_dns_zone_mlw_api.id
 }
 
 output "private_dns_zone_notebook_id" {

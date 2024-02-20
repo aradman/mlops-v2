@@ -16,6 +16,32 @@ resource "azurerm_machine_learning_workspace" "mlw" {
   tags = var.tags
 }
 
+resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
+  name                = "${azurerm_machine_learning_workspace.mlw.name}-plink"
+  location            = var.location
+  resource_group_name = var.rg_name
+  subnet_id           = var.pe_subnet_id
+
+  private_service_connection {
+    name                           = "${azurerm_machine_learning_workspace.mlw.name}-plink-conn"
+    private_connection_resource_id = azurerm_machine_learning_workspace.mlw.id
+    is_manual_connection           = false
+    subresource_names              = ["amlworkspace"]
+  }
+
+  private_dns_zone_group {
+    name                 = "privatednszonegroupmlw"
+    private_dns_zone_ids = [var.private_dns_zone_mlw_api_id, var.private_dns_zone_notebook_id ]
+  }
+
+  tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
 # Compute cluster
 
 resource "azurerm_machine_learning_compute_cluster" "adl_aml_ws_compute_cluster" {

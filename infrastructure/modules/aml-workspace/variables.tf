@@ -58,3 +58,17 @@ variable "storage_account_name" {
   type        = string
   description = "The Name of the Storage Account linked to AML workspace"
 }
+
+variable "private_dns_zone_mlw_api_id" {
+  type        = string
+  description = "Keyvault private dns zone id"
+}
+
+variable "private_dns_zone_notebook_id" {
+  type        = string
+  description = "Keyvault private dns zone id"
+}
+variable "pe_subnet_id" {
+  type        = string
+  description = "Private endpoint subnet id"
+}
