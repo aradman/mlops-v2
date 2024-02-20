@@ -43,8 +43,7 @@ resource "azurerm_subnet_network_security_group_association" "pe_nsg" {
   # The subnet will refuse to accept the NSG if it's not this exact
   # list so we need to ensure the rules are deployed before the association
   depends_on = [
-    azurerm_network_security_rule.pe_out_deny_all,
-    azurerm_subnet.pe_subnet,
+    azurerm_network_security_rule.pe_out_deny_all
   ]
   timeouts {}
 }
