@@ -68,6 +68,23 @@ module "storage_account_aml" {
   tags = local.tags
 }
 
+# Key vault
+
+module "key_vault" {
+  source = "./modules/key-vault"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+
+  prefix  = var.prefix
+  postfix = var.postfix
+  env = var.environment
+  pe_subnet_id                        = module.subnet.pe_subnet_id
+  private_dns_zone_kv_id            = module.private_dns.private_dns_zone_kv_id
+
+  tags = local.tags
+}
+
 # # Azure Machine Learning workspace
 
 # module "aml_workspace" {
@@ -91,20 +108,7 @@ module "storage_account_aml" {
 #   tags = local.tags
 # }
 
-# # Key vault
 
-# module "key_vault" {
-#   source = "./modules/key-vault"
-
-#   rg_name  = module.resource_group.name
-#   location = module.resource_group.location
-
-#   prefix  = var.prefix
-#   postfix = var.postfix
-#   env = var.environment
-
-#   tags = local.tags
-# }
 
 # # Application insights
 
