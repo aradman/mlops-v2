@@ -40,6 +40,11 @@ variable "private_dns_zone_blob_id" {
   description = "Blob private dns zone id"
 }
 
+variable "private_dns_zone_file_id" {
+  type        = string
+  description = "file private dns zone id"
+}
+
 variable "pe_subnet_id" {
   type        = string
   description = "Private endpoint subnet id"
