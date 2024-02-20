@@ -36,6 +36,18 @@ module "subnet" {
   scoring_subnet_cidr = "10.0.3.0/24"
 }
 
+# Private endpoint network security group
+
+module "pe_nsg" {
+  source = "./modules/pe-nsg"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+
+  pe_subnet_id                        = module.subnet.pe_subnet_id
+
+}
+
 # Private DNS
 module "private_dns" {
   source = "./modules/private-dns"
