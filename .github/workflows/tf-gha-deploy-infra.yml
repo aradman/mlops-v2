@@ -37,7 +37,7 @@ jobs:
       clientSecret: ${{ secrets.ARM_CLIENT_SECRET }}
       subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       tenantId: ${{ secrets.ARM_TENANT_ID }}
-      jumphostPassword: ${{ secrets.AZURE_JUMPHOST_PASSWORD }}
+      jumphostPassword: ${{ secrets.ARM_JUMPHOST_PASSWORD }}
   deploy-azureml-resources:
     runs-on: ubuntu-latest
     steps:
