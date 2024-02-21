@@ -159,7 +159,7 @@ module "application_insights" {
 }
 
 # Jumphost
-module "key_vault" {
+module "jumphost" {
   source = "./modules/jumphost"
 
   rg_name  = module.resource_group.name
