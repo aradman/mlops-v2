@@ -60,3 +60,47 @@ resource "azurerm_subnet_network_security_group_association" "scoring_nsg" {
 
   timeouts {}
 }
+
+# Management nsg
+resource "azurerm_network_security_group" "management_nsg" {  
+  name                = "management-nsg"
+  location            = var.location
+  resource_group_name = var.rg_name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+
+# Inbound Rules
+resource "azurerm_network_security_rule" "vm_inbound_bastion" {
+  name      = "inbound_rdp_ssh_allow"
+  priority  = 110
+  direction = "Inbound"
+  access    = "Allow"
+  protocol  = "*"
+
+  source_port_range     = "*"
+  source_address_prefix = "*"
+
+  destination_port_ranges    = ["22", "3389"]
+  destination_address_prefix = "*"
+
+  resource_group_name         = var.rg_name
+  network_security_group_name = azurerm_network_security_group.management_nsg.name
+
+  depends_on = [
+    azurerm_network_security_group.management_nsg
+  ]
+}
+
+# Associate management nsg with management subnet
+resource "azurerm_subnet_network_security_group_association" "management_nsg" {
+  subnet_id                 = var.management_subnet_id
+  network_security_group_id = azurerm_network_security_group.management_nsg.id
+
+  timeouts {}
+}

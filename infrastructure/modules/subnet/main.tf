@@ -21,3 +21,11 @@ resource "azurerm_subnet" "scoring_subnet" {
   address_prefixes                               = [var.scoring_subnet_cidr]
   enforce_private_link_endpoint_network_policies = true
 }
+
+resource "azurerm_subnet" "management_subnet" {
+  name                                           = "snet-management"
+  resource_group_name                            = var.rg_name
+  virtual_network_name                           = var.vnet_name
+  address_prefixes                               = [var.management_subnet_cidr]
+  enforce_private_link_endpoint_network_policies = true
+}

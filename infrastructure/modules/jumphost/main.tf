@@ -6,32 +6,14 @@ resource "azurerm_network_interface" "jumphost_nic" {
   ip_configuration {
     name                          = "configuration"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = var.pe_subnet_id
+    subnet_id                     = var.management_subnet_id
     # public_ip_address_id          = azurerm_public_ip.jumphost_public_ip.id
-  }
-}
-
-resource "azurerm_network_security_group" "jumphost_nsg" {
-  name                = "jumphost-nsg"
-  location            = azurerm_resource_group.aml_rg.location
-  resource_group_name = azurerm_resource_group.aml_rg.name
-
-  security_rule {
-    name                       = "RDP"
-    priority                   = 1010
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = 3389
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
   }
 }
 
 resource "azurerm_network_interface_security_group_association" "jumphost_nsg_association" {
   network_interface_id      = azurerm_network_interface.jumphost_nic.id
-  network_security_group_id = azurerm_network_security_group.jumphost_nsg.id
+  network_security_group_id = var.management_nsg_id
 }
 
 resource "azurerm_virtual_machine" "jumphost" {

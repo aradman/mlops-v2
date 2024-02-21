@@ -15,12 +15,17 @@ variable "pe_subnet_cidr" {
 
 variable "training_subnet_cidr" {
   type        = string
-  description = "Vitural network CIDR"
+  description = "Training subnet CIDR"
   default     = "10.0.2.0/24"
 }
 
 variable "scoring_subnet_cidr" {
   type        = string
-  description = "Vitural network CIDR"
+  description = "Scoring subnet CIDR"
   default     = "10.0.3.0/24"
+}
+variable "management_subnet_cidr" {
+  type        = string
+  description = "Management subnet CIDR"
+  default     = "10.0.4.0/24"
 }

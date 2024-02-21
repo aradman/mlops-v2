@@ -158,6 +158,19 @@ module "application_insights" {
   tags = local.tags
 }
 
+# Jumphost
+module "key_vault" {
+  source = "./modules/jumphost"
+
+  rg_name  = module.resource_group.name
+  location = module.resource_group.location
+
+  management_subnet_id              = module.subnet.management_subnet_id
+  management_nsg_id                 = module.nsg.management_nsg_id
+
+
+}
+
 # module "data_explorer" {
 #   source = "./modules/data-explorer"
 

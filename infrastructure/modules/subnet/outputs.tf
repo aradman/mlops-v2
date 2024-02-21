@@ -9,3 +9,7 @@ output "training_subnet_id" {
 output "scoring_subnet_id" {
   value = azurerm_subnet.scoring_subnet.id
 }
+
+output "management_subnet_id" {
+  value = azurerm_subnet.management_subnet.id
+}

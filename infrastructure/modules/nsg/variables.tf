@@ -28,3 +28,8 @@ variable "scoring_subnet_id" {
   type        = string
   description = "Scoring subnet id"
 }
+
+variable "management_subnet_id" {
+  type        = string
+  description = "Management subnet id"
+}
