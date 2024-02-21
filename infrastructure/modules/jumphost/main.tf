@@ -33,11 +33,11 @@ resource "azurerm_virtual_machine" "jumphost" {
     version   = "latest"
   }
 
-#   os_profile {
-#     computer_name  = "jumphost"
-#     admin_username = "azureuser"
-#     admin_password = "Pa$$w0rd"
-#   }
+  os_profile {
+    computer_name  = "jumphost"
+    admin_username = "azureuser"
+    admin_password = var.jumphost_password
+  }
 
   os_profile_windows_config {
     provision_vm_agent        = true

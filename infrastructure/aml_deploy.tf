@@ -170,6 +170,8 @@ module "jumphost" {
   management_subnet_id              = module.subnet.management_subnet_id
   management_nsg_id                 = module.nsg.management_nsg_id
 
+  jumphost_password                 = var.jumphost_password
+
 
 }
 

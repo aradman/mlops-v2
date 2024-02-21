@@ -17,3 +17,8 @@ variable "management_nsg_id" {
   type        = string
   description = "Management nsg id"
 }
+
+variable "jumphost_password" {
+  type        = string
+  description = "Jumphost password"
+}
