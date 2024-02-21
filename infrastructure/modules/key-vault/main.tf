@@ -7,6 +7,12 @@ resource "azurerm_key_vault" "kv" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
 
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+  }
+
+
   tags = var.tags
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
