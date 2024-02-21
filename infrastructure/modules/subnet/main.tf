@@ -21,4 +21,3 @@ resource "azurerm_subnet" "scoring_subnet" {
   address_prefixes                               = [var.scoring_subnet_cidr]
   enforce_private_link_endpoint_network_policies = true
 }
-
