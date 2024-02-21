@@ -46,7 +46,8 @@ module "nsg" {
 
   pe_subnet_id                        = module.subnet.pe_subnet_id
   training_subnet_id                  = module.subnet.training_subnet_id
-  scoring_subnet_id                  = module.subnet.scoring_subnet_id
+  scoring_subnet_id                   = module.subnet.scoring_subnet_id
+  management_subnet_id                = module.subnet.management_subnet_id
 
 }
 
