@@ -18,6 +18,11 @@ resource "azurerm_storage_account" "st" {
   account_kind             = "StorageV2"
   is_hns_enabled           = var.hns_enabled
 
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+  }
+
   tags = var.tags
   
 }

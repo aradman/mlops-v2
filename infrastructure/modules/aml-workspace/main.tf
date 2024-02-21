@@ -14,6 +14,12 @@ resource "azurerm_machine_learning_workspace" "mlw" {
   }
 
   tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+  
 }
 
 resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
