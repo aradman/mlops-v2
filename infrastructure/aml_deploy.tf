@@ -78,8 +78,8 @@ module "storage_account_aml" {
   pe_subnet_id                        = module.subnet.pe_subnet_id
   private_dns_zone_blob_id            = module.private_dns.private_dns_zone_blob_id
   private_dns_zone_file_id            = module.private_dns.private_dns_zone_file_id
-  # firewall_bypass                     = ["AzureServices"]
-  # firewall_virtual_network_subnet_ids = []
+  firewall_bypass                     = ["AzureServices"]
+  firewall_virtual_network_subnet_ids = []
 
   tags = local.tags
 }
