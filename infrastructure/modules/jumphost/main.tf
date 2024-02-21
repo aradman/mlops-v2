@@ -36,6 +36,7 @@ resource "azurerm_virtual_machine" "jumphost" {
   os_profile {
     computer_name  = "jumphost"
     admin_username = "azureuser"
+    admin_password = "Pa$$w0rd"
   }
 
   os_profile_windows_config {
