@@ -14,7 +14,7 @@ jobs:
     uses: aradman/mlops-v2/.github/workflows/tf-gha-install-terraform.yml@main
     with:
       TFAction: 'apply'
-      dply_environment: ${{ needs.get-config.outputs.environment }} 
+      dply_environment: dev
       location: ${{ needs.get-config.outputs.location }}
       namespace: ${{ needs.get-config.outputs.namespace }}
       postfix: ${{ needs.get-config.outputs.postfix }}
