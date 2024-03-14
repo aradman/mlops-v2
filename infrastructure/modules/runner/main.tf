@@ -88,7 +88,7 @@ resource "null_resource" "install_powershell" {
     connection {
       type        = "ssh"
       host        = azurerm_network_interface.runner_nic.private_ip_address
-      user        = azurerm_virtual_machine.githubrunner.admin_username
+      user        = azurerm_virtual_machine.runner.admin_username
       password    = random_password.runner_password.result
     }
   }
@@ -105,10 +105,10 @@ resource "null_resource" "install_az_module" {
     ]
   }
 
-    connection {
+  connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.githubrunner.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -132,7 +132,7 @@ resource "null_resource" "install_runner" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.githubrunner.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -153,7 +153,7 @@ resource "null_resource" "install_az_cli" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.githubrunner.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
