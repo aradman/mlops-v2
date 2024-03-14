@@ -90,6 +90,7 @@ resource "null_resource" "install_powershell" {
     host        = azurerm_network_interface.runner_nic.private_ip_address
     user        = "azureuser"
     password    = random_password.runner_password.result
+    timeout     = "5m"
   }
   }
 }
@@ -110,12 +111,15 @@ resource "null_resource" "install_az_module" {
     host        = azurerm_network_interface.runner_nic.private_ip_address
     user        = "azureuser"
     password    = random_password.runner_password.result
+    timeout     = "5m"
   }
 }
 
 resource "null_resource" "install_runner" {
   depends_on = [
-    azurerm_virtual_machine.runner
+    azurerm_virtual_machine.runner,
+    null_resource.install_powershell,
+    null_resource.install_az_module
   ]
   provisioner "remote-exec" {
     inline = [
@@ -134,14 +138,19 @@ resource "null_resource" "install_runner" {
     host        = azurerm_network_interface.runner_nic.private_ip_address
     user        = "azureuser"
     password    = random_password.runner_password.result
+    timeout     = "5m"
   }
 }
 
 resource "null_resource" "install_az_cli" {
   depends_on = [
-    azurerm_virtual_machine.runner
+    azurerm_virtual_machine.runner,
+    null_resource.install_powershell,
+    null_resource.install_az_module,
+    null_resource.install_runner
   ]
   provisioner "remote-exec" {
+  
     inline = [
       # Install Azure CLI
       "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash",
@@ -155,5 +164,6 @@ resource "null_resource" "install_az_cli" {
     host        = azurerm_network_interface.runner_nic.private_ip_address
     user        = "azureuser"
     password    = random_password.runner_password.result
+    timeout     = "5m"
   }
 }
