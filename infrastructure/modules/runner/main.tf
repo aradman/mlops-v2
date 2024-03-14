@@ -69,10 +69,6 @@ resource "azurerm_virtual_machine" "runner" {
   }
 }
 
-locals {
-  os_profile_admin_username = [for vm in azurerm_virtual_machine.runner : vm.os_profile.admin_username if vm.os_profile.admin_username == "azureuser"]
-}
-
 resource "null_resource" "install_powershell" {
   depends_on = [
     azurerm_virtual_machine.runner
@@ -92,7 +88,7 @@ resource "null_resource" "install_powershell" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = local.os_profile_admin_username
+    user        = "azureuser"
     password    = random_password.runner_password.result
   }
   }
@@ -112,7 +108,7 @@ resource "null_resource" "install_az_module" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = local.os_profile_admin_username
+    user        = "azureuser"
     password    = random_password.runner_password.result
   }
 }
@@ -136,7 +132,7 @@ resource "null_resource" "install_runner" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = local.os_profile_admin_username
+    user        = "azureuser"
     password    = random_password.runner_password.result
   }
 }
@@ -157,7 +153,7 @@ resource "null_resource" "install_az_cli" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = local.os_profile_admin_username
+    user        = "azureuser"
     password    = random_password.runner_password.result
   }
 }
