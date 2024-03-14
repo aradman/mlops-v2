@@ -67,103 +67,117 @@ resource "azurerm_virtual_machine" "runner" {
       tags
     ]
   }
+
+  settings = <<SETTINGS
+  {
+      "commandToExecute": "apt-get install docker.io -y"
+      "commandToExecute": "sudo apt-get update"
+      "commandToExecute": "sudo apt-get install -y wget apt-transport-https software-properties-common"
+      "commandToExecute": "wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+      "commandToExecute": "sudo dpkg -i packages-microsoft-prod.deb"
+      "commandToExecute": "sudo apt-get update"
+      "commandToExecute": "sudo add-apt-repository universe"
+      "commandToExecute": "sudo apt-get update"
+      "commandToExecute": "sudo apt-get install -y powershell"
+  }
+  SETTINGS
 }
 
-resource "null_resource" "install_powershell" {
-  depends_on = [
-    azurerm_virtual_machine.runner
-  ]
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y wget apt-transport-https software-properties-common",
-      "wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb",
-      "sudo dpkg -i packages-microsoft-prod.deb",
-      "sudo apt-get update",
-      "sudo add-apt-repository universe",
-      "sudo apt-get update",
-      "sudo apt-get install -y powershell"
-    ]
+# resource "null_resource" "install_powershell" {
+#   depends_on = [
+#     azurerm_virtual_machine.runner
+#   ]
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo apt-get update",
+#       "sudo apt-get install -y wget apt-transport-https software-properties-common",
+#       "wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb",
+#       "sudo dpkg -i packages-microsoft-prod.deb",
+#       "sudo apt-get update",
+#       "sudo add-apt-repository universe",
+#       "sudo apt-get update",
+#       "sudo apt-get install -y powershell"
+#     ]
 
-  connection {
-    type        = "ssh"
-    host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = "azureuser"
-    password    = random_password.runner_password.result
-    timeout     = "5m"
-  }
-  }
-}
+#   connection {
+#     type        = "ssh"
+#     host        = azurerm_network_interface.runner_nic.private_ip_address
+#     user        = "azureuser"
+#     password    = random_password.runner_password.result
+#     timeout     = "5m"
+#   }
+#   }
+# }
 
-resource "null_resource" "install_az_module" {
-  depends_on = [
-    azurerm_virtual_machine.runner,
-    null_resource.install_powershell
-  ]
-  provisioner "remote-exec" {
-    inline = [
-      "pwsh -Command 'Install-Module -Name Az -AllowClobber -Scope AllUsers -Force -SkipPublisherCheck'"
-    ]
-  }
+# resource "null_resource" "install_az_module" {
+#   depends_on = [
+#     azurerm_virtual_machine.runner,
+#     null_resource.install_powershell
+#   ]
+#   provisioner "remote-exec" {
+#     inline = [
+#       "pwsh -Command 'Install-Module -Name Az -AllowClobber -Scope AllUsers -Force -SkipPublisherCheck'"
+#     ]
+#   }
 
-  connection {
-    type        = "ssh"
-    host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = "azureuser"
-    password    = random_password.runner_password.result
-    timeout     = "5m"
-  }
-}
+#   connection {
+#     type        = "ssh"
+#     host        = azurerm_network_interface.runner_nic.private_ip_address
+#     user        = "azureuser"
+#     password    = random_password.runner_password.result
+#     timeout     = "5m"
+#   }
+# }
 
-resource "null_resource" "install_runner" {
-  depends_on = [
-    azurerm_virtual_machine.runner,
-    null_resource.install_powershell,
-    null_resource.install_az_module
-  ]
-  provisioner "remote-exec" {
-    inline = [
-      # Downloading and configuring GitHub runner
-      "mkdir actions-runner && cd actions-runner",
-      "curl -O -L https://github.com/actions/runner/releases/download/v2.283.2/actions-runner-linux-x64-2.283.2.tar.gz",
-      "tar xzf ./actions-runner-linux-x64-2.283.2.tar.gz",
-      "./config.sh --url ${var.repository} --token ${var.access_token} --name ${var.runner_name} --work ./_work",
-      "./svc.sh install",
-      "./svc.sh start"
-    ]
-  }
+# resource "null_resource" "install_runner" {
+#   depends_on = [
+#     azurerm_virtual_machine.runner,
+#     null_resource.install_powershell,
+#     null_resource.install_az_module
+#   ]
+#   provisioner "remote-exec" {
+#     inline = [
+#       # Downloading and configuring GitHub runner
+#       "mkdir actions-runner && cd actions-runner",
+#       "curl -O -L https://github.com/actions/runner/releases/download/v2.283.2/actions-runner-linux-x64-2.283.2.tar.gz",
+#       "tar xzf ./actions-runner-linux-x64-2.283.2.tar.gz",
+#       "./config.sh --url ${var.repository} --token ${var.access_token} --name ${var.runner_name} --work ./_work",
+#       "./svc.sh install",
+#       "./svc.sh start"
+#     ]
+#   }
 
-  connection {
-    type        = "ssh"
-    host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = "azureuser"
-    password    = random_password.runner_password.result
-    timeout     = "5m"
-  }
-}
+#   connection {
+#     type        = "ssh"
+#     host        = azurerm_network_interface.runner_nic.private_ip_address
+#     user        = "azureuser"
+#     password    = random_password.runner_password.result
+#     timeout     = "5m"
+#   }
+# }
 
-resource "null_resource" "install_az_cli" {
-  depends_on = [
-    azurerm_virtual_machine.runner,
-    null_resource.install_powershell,
-    null_resource.install_az_module,
-    null_resource.install_runner
-  ]
-  provisioner "remote-exec" {
+# resource "null_resource" "install_az_cli" {
+#   depends_on = [
+#     azurerm_virtual_machine.runner,
+#     null_resource.install_powershell,
+#     null_resource.install_az_module,
+#     null_resource.install_runner
+#   ]
+#   provisioner "remote-exec" {
   
-    inline = [
-      # Install Azure CLI
-      "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash",
-      # Install Azure Machine Learning extension
-      "az extension add -n azure-cli-ml"
-    ]
-  }
+#     inline = [
+#       # Install Azure CLI
+#       "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash",
+#       # Install Azure Machine Learning extension
+#       "az extension add -n azure-cli-ml"
+#     ]
+#   }
 
-  connection {
-    type        = "ssh"
-    host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = "azureuser"
-    password    = random_password.runner_password.result
-    timeout     = "5m"
-  }
-}
+#   connection {
+#     type        = "ssh"
+#     host        = azurerm_network_interface.runner_nic.private_ip_address
+#     user        = "azureuser"
+#     password    = random_password.runner_password.result
+#     timeout     = "5m"
+#   }
+# }
