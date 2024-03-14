@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -54,7 +54,81 @@ variable "enable_aml_computecluster" {
   default     = false
 }
 
+variable "enable_vnet_isolation" {
+  description = "Enable or disable vnet isolation"
+  type        = bool
+  default     = true
+}
+
 variable "storage_account_name" {
   type        = string
   description = "The Name of the Storage Account linked to AML workspace"
+}
+
+variable "private_dns_zone_mlw_api_id" {
+  type        = string
+  description = "Azure mlw api private dns zone id"
+}
+
+variable "private_dns_zone_notebook_id" {
+  type        = string
+  description = "Azure mlw notebooks private dns zone id"
+}
+
+variable "private_dns_zone_azuremlcert_id" {
+  type        = string
+  description = "Azure mlw cert private dns zone id"
+}
+
+variable "private_endpoints_subnet_id" {
+  type        = string
+  description = "Private endpoint subnet id"
+}
+
+# variable "training_subnet_id" {
+#   type        = string
+#   description = "Training subnet id"
+# }
+
+# variable "scoring_subnet_id" {
+#   type        = string
+#   description = "Scoring subnet id"
+# }
+
+variable "training_cluster" {
+  type = object({
+    name                                 = string
+    vm_priority                          = string
+    vm_size                              = string
+    min_nodes                            = number
+    max_nodes                            = number
+    scale_down_nodes_after_idle_duration = string
+  })
+  default = {
+    name                                 = "training-cluster"
+    vm_priority                          = "LowPriority"
+    vm_size                              = "Standard_DS3_v2"
+    min_nodes                            = 0
+    max_nodes                            = 4
+    scale_down_nodes_after_idle_duration = "PT2M"
+  }
+}
+
+variable "scoring_cluster" {
+  type = object({
+    name                                 = string
+    vm_priority                          = string
+    vm_size                              = string
+    min_nodes                            = number
+    max_nodes                            = number
+    scale_down_nodes_after_idle_duration = string
+  })
+  default = {
+    name                                 = "scoring-cluster"
+    vm_priority                          = "LowPriority"
+    vm_size                              = "Standard_DS3_v2"
+    min_nodes                            = 0
+    max_nodes                            = 4
+    scale_down_nodes_after_idle_duration = "PT2M"
+  }
 }

@@ -1,0 +1,57 @@
+name: taxi-deploy-online-endpoint-pipeline
+
+on: 
+  workflow_dispatch:
+jobs:
+  get-config:
+      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@main
+      with:
+        file_name: config-infra-sbx.yml
+  delete-endpoint:
+      needs: get-config
+      uses: aradman/mlops-v2/.github/workflows/delete-endpoint.yml@main
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }} 
+        endpoint_file: usecase/taxi/mlops/azureml/deploy/online/online-endpoint.yml
+        endpoint_name: ${{ format('taxi-gha-{0}', needs.get-config.outputs.oep) }}
+        endpoint_type: online
+        dply_environment: ${{ needs.get-config.outputs.environment }}       
+      secrets:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+  create-endpoint:
+      needs: [get-config,delete-endpoint]
+      uses: aradman/mlops-v2/.github/workflows/create-endpoint.yml@main
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }} 
+        endpoint_file: usecase/taxi/mlops/azureml/deploy/online/online-endpoint.yml
+        endpoint_name: ${{ format('taxi-gha-{0}', needs.get-config.outputs.oep) }}
+        endpoint_type: online
+        dply_environment: ${{ needs.get-config.outputs.environment }}        
+      secrets:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+  create-deployment:
+      uses: aradman/mlops-v2/.github/workflows/create-deployment.yml@main
+      needs: [get-config,create-endpoint]
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }} 
+        endpoint_file: usecase/taxi/mlops/azureml/deploy/online/online-deployment.yml
+        endpoint_name: ${{ format('taxi-gha-{0}', needs.get-config.outputs.oep) }}
+        endpoint_type: online
+        deployment_name: taxi-online-dp
+        dply_environment: ${{ needs.get-config.outputs.environment }}         
+      secrets:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+  allocate-traffic:
+      uses: aradman/mlops-v2/.github/workflows/allocate-traffic.yml@main
+      needs: [get-config,create-deployment]
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }} 
+        traffic_allocation: taxi-online-dp=100
+        endpoint_name: ${{ format('taxi-gha-{0}', needs.get-config.outputs.oep) }}
+        dply_environment: ${{ needs.get-config.outputs.environment }}         
+      secrets:
+        creds: ${{secrets.AZURE_CREDENTIALS}}

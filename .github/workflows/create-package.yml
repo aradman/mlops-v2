@@ -1,0 +1,43 @@
+name: create-package
+
+on:
+  workflow_call:  
+    inputs:
+      dply_environment:
+        type: string
+        required: true 
+      resource_group:
+        required: true
+        type: string
+      workspace_name:
+        required: true
+        type: string
+      model_name:
+        required: true
+        type: string
+      package_file:
+        required: true
+        type: string
+    secrets:
+      creds:
+        required: true
+jobs:
+  create-package:
+    runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: "Az CLI login"
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.creds}}
+          enable-AzPSSession: true
+      - name: install-extension
+        run: az extension add -n ml -y
+      - name: update-extension
+        run: az extension update -n ml
+      - name: create-batch-deployment
+        run: |
+          MODEL_VERSION=$(az ml model show --name ${{ inputs.model_name }} --label latest --registry-name azureml | jq .version -r)
+          az ml model package --name ${{ inputs.model_name }} --version $MODEL_VERSION --workspace-name=${{ inputs.workspace_name }} --resource-group=${{ inputs.resource_group }} --file ${{ inputs.package_file }}

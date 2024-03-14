@@ -1,0 +1,59 @@
+name: taxi-deploy-model-training-pipeline
+
+on: 
+  workflow_dispatch:
+jobs:
+  get-config:
+      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@main
+      with:
+        file_name: config-infra-dev.yml
+  register-environment:
+      needs: get-config
+      uses: aradman/mlops-v2/.github/workflows/register-environment.yml@main
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }}     
+        environment_file:  usecase/taxi/mlops/azureml/train/train-env.yml
+        conda_file: usecase/taxi/data-science/environment/train-conda.yml
+        dply_environment: ${{ needs.get-config.outputs.environment }} 
+      secrets:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+          
+  register-dataset:
+    needs: get-config
+    uses: aradman/mlops-v2/.github/workflows/register-dataset.yml@main
+    with:
+      resource_group: ${{ needs.get-config.outputs.resource_group }}
+      workspace_name: ${{ needs.get-config.outputs.aml_workspace }}
+      name: taxi-data
+      data_file: usecase/taxi/mlops/azureml/train/data.yml
+      dply_environment: ${{ needs.get-config.outputs.environment }} 
+    secrets:
+      creds: ${{secrets.AZURE_CREDENTIALS}}
+      
+  create-compute:
+      needs: [get-config,register-environment,register-dataset]
+      uses: aradman/mlops-v2/.github/workflows/create-compute.yml@main
+      with:
+        cluster_name: taxi-cpu-cluster
+        size: Standard_DS3_v2
+        min_instances: 0
+        max_instances: 4
+        cluster_tier: low_priority
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }}
+        dply_environment: ${{ needs.get-config.outputs.environment }}      
+      secrets:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      
+  run-pipeline:
+      needs: [get-config,register-environment,create-compute,register-dataset]
+      uses: aradman/mlops-v2/.github/workflows/run-pipeline.yml@main
+      with:
+        resource_group: ${{ needs.get-config.outputs.resource_group }}
+        workspace_name: ${{ needs.get-config.outputs.aml_workspace }}     
+        parameters-file:  usecase/taxi/mlops/azureml/train/pipeline.yml
+        job-name: test
+        dply_environment: ${{ needs.get-config.outputs.environment }} 
+      secrets:
+          creds: ${{secrets.AZURE_CREDENTIALS}}

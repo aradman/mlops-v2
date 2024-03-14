@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -27,4 +27,20 @@ variable "postfix" {
 variable "env" {
   type        = string
   description = "Environment prefix"
+}
+
+# variable "private_dns_zone_acr_id" {
+#   type        = string
+#   description = "Container registry private dns zone id"
+# }
+
+variable "private_endpoints_subnet_id" {
+  type        = string
+  description = "Private endpoint subnet id"
+}
+
+variable "enable_vnet_isolation" {
+  description = "Enable or disable vnet isolation"
+  type        = bool
+  default     = true
 }

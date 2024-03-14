@@ -6,15 +6,15 @@ env:
     config_env: 'none'
 jobs:
   get-config:
-      uses: Azure/mlops-templates/.github/workflows/read-yaml.yml@main
+      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@main
       with:
-        file_name: config-infra-prod.yml
+        file_name: config-infra-dev.yml
   test-terraform-state-deployment:
     needs: get-config
-    uses: Azure/mlops-templates/.github/workflows/tf-gha-install-terraform.yml@main
+    uses: aradman/mlops-v2/.github/workflows/tf-gha-install-terraform.yml@main
     with:
       TFAction: 'apply'
-      dply_environment: ${{ needs.set-env-branch.outputs.config-file }} 
+      dply_environment: ${{ needs.get-config.outputs.environment }} 
       location: ${{ needs.get-config.outputs.location }}
       namespace: ${{ needs.get-config.outputs.namespace }}
       postfix: ${{ needs.get-config.outputs.postfix }}
@@ -36,6 +36,7 @@ jobs:
       clientSecret: ${{ secrets.ARM_CLIENT_SECRET }}
       subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       tenantId: ${{ secrets.ARM_TENANT_ID }}
+      accessToken: ${{ secrets.ACCESS_TOKEN }}
   deploy-azureml-resources:
     runs-on: ubuntu-latest
     steps:

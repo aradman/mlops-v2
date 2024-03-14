@@ -130,12 +130,12 @@ dmypy.json
 .pyre/
 
 # Terraform
-.terraform.lock.hcl
-terraform.tfstate
-terraform.tfstate.backup
-.terraform.tfstate.lock.info
-.terraform
-terraform.tfvars
+/infrastructure/.terraform.lock.hcl
+/infrastructure/terraform.tfstate
+/infrastructure/terraform.tfstate.backup
+/infrastructure/.terraform.tfstate.lock.info
+/infrastructure/.terraform
+/infrastructure/terraform.tfvars
 
 /infrastructure/bicep/main.json
 ! /infrastructure/bicep/bicepconfig.json
