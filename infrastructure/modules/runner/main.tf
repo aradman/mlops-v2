@@ -30,6 +30,9 @@ resource "azurerm_virtual_machine" "runner" {
   resource_group_name   = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.runner_nic]
   vm_size               = "Standard_DS1_v2"
+  computer_name         = "githubrunner"
+  admin_username        = "azureuser"
+  admin_password        = random_password.runner_password.result
 
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
@@ -39,12 +42,6 @@ resource "azurerm_virtual_machine" "runner" {
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-lts"
     version   = "latest"
-  }
-
-  os_profile {
-    computer_name  = "githubrunner"
-    admin_username = "azureuser"
-    admin_password = random_password.runner_password.result
   }
 
   os_profile_linux_config {
@@ -88,7 +85,7 @@ resource "null_resource" "install_powershell" {
     connection {
       type        = "ssh"
       host        = azurerm_network_interface.runner_nic.private_ip_address
-      user        = azurerm_virtual_machine.runner.os_profile.admin_username
+      user        = azurerm_virtual_machine.runner.admin_username
       password    = random_password.runner_password.result
     }
   }
@@ -108,7 +105,7 @@ resource "null_resource" "install_az_module" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.runner.os_profile.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -132,7 +129,7 @@ resource "null_resource" "install_runner" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.runner.os_profile.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -153,7 +150,7 @@ resource "null_resource" "install_az_cli" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = azurerm_virtual_machine.runner.os_profile.admin_username
+    user        = azurerm_virtual_machine.runner.admin_username
     password    = random_password.runner_password.result
   }
 }
