@@ -44,13 +44,13 @@ variable "enable_vnet_isolation" {
 #   description = "Existing hub virtual network resource group name"
 # }
 
-variable "exisiting_hub_vnet_name" {
-  description = "Existing hub virtual network name"
-}
+# variable "exisiting_hub_vnet_name" {
+#   description = "Existing hub virtual network name"
+# }
 
-variable "exisiting_hub_vnet_id" {
-  description = "Existing hub virtual network ID"
-}
+# variable "exisiting_hub_vnet_id" {
+#   description = "Existing hub virtual network ID"
+# }
 
 # variable "firewall_private_ip_address" {
 #   description = "Azure firewall private IP address"
