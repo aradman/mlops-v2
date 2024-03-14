@@ -103,6 +103,7 @@ resource "null_resource" "install_az_module" {
     inline = [
       "pwsh -Command 'Install-Module -Name Az -AllowClobber -Scope AllUsers -Force -SkipPublisherCheck'"
     ]
+  }
 
     connection {
     type        = "ssh"
