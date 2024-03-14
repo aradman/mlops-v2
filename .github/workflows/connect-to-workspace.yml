@@ -4,6 +4,9 @@ name: Connect to Workspace
 on: 
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       resourceGroup:
         description: 'Resource Group'     
         required: true
@@ -23,6 +26,7 @@ jobs:
   ConnectToWorkspace:
     # The type of runner that the job will run on
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
       - name: 'Az CLI login'
         uses: azure/login@v1

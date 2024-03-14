@@ -30,6 +30,7 @@ module "virtual_network" {
   # scoring_subnet           = var.scoring_subnet
   management_subnet        = var.management_subnet
   bastion_subnet           = var.bastion_subnet
+  runner_subnet            = var.runner_subnet
   tags                     = local.tags
 
   exisiting_hub_vnet_id                  = var.exisiting_hub_vnet_id
@@ -192,6 +193,8 @@ module "runner" {
   location            = module.resource_group.location
 
   runner_subnet_id     = local.virtual_network.runner_subnet_id
+  repository           = var.repository
+  access_token      = var.a 
   # key_vault_id         = local.key_vault.id
 }
 

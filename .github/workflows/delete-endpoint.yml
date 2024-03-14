@@ -3,6 +3,9 @@ name: delete-endpoint
 on:
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       endpoint_file:
         required: true
         type: string
@@ -24,6 +27,7 @@ on:
 jobs:
   delete-endpoint:
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
       - name: checkout
         uses: actions/checkout@v3

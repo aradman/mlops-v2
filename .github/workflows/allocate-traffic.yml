@@ -3,6 +3,9 @@ name: allocate-traffic
 on:
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       endpoint_name:
         required: true
         type: string
@@ -21,6 +24,7 @@ on:
 jobs:
   allocate-traffic:
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
       - name: checkout
         uses: actions/checkout@v3

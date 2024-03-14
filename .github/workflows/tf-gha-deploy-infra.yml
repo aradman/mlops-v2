@@ -6,15 +6,15 @@ env:
     config_env: 'none'
 jobs:
   get-config:
-      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@feature/add-pes
+      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@main
       with:
         file_name: config-infra-dev.yml
   test-terraform-state-deployment:
     needs: get-config
-    uses: aradman/mlops-v2/.github/workflows/tf-gha-install-terraform.yml@feature/add-pes
+    uses: aradman/mlops-v2/.github/workflows/tf-gha-install-terraform.yml@main
     with:
       TFAction: 'apply'
-      dply_environment: dev 
+      dply_environment: ${{ needs.get-config.outputs.environment }} 
       location: ${{ needs.get-config.outputs.location }}
       namespace: ${{ needs.get-config.outputs.namespace }}
       postfix: ${{ needs.get-config.outputs.postfix }}

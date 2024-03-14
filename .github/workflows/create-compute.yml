@@ -3,6 +3,9 @@ name: create-compute
 on: 
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       cluster_name:
         required: true
         type: string
@@ -30,6 +33,7 @@ on:
 jobs:
   create-compute:
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -52,7 +56,7 @@ jobs:
                                   --resource-group ${{ inputs.resource_group }} \
                                   --workspace-name ${{ inputs.workspace_name }} \
                                   --enable-node-public-ip false
-                        
+                                  
       - name: create-compute-using-tier
         if: ${{ inputs.cluster_tier != ''}}
         run: |
@@ -65,4 +69,6 @@ jobs:
                                   --resource-group ${{ inputs.resource_group }} \
                                   --workspace-name ${{ inputs.workspace_name }} \
                                   --enable-node-public-ip false
+                        
+                                  
 

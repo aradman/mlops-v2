@@ -19,6 +19,7 @@ locals {
     # scoring           = var.scoring_subnet
     management        = var.deploy_management_subnet ? var.management_subnet : null
     bastion           = var.enable_vnet_isolation && var.deploy_bastion? var.bastion_subnet : null
+    runner            = var.enable_vnet_isolation ? var.runner_subnet : null
   }
 
 }
@@ -81,21 +82,21 @@ resource "azurerm_subnet_network_security_group_association" "subnet_nsg" {
 }
 
 
-// Peer mlops virtual network with exisitng hub virtual network
-resource "azurerm_virtual_network_peering" "mlops_vnet_to_hub_vnet" {
-  name                      = "mlops-vnet-to-hub-vnet"
-  resource_group_name       = var.resource_group_name
-  virtual_network_name      = azurerm_virtual_network.vnet.name
-  remote_virtual_network_id = var.exisiting_hub_vnet_id
-}
+# // Peer mlops virtual network with exisitng hub virtual network
+# resource "azurerm_virtual_network_peering" "mlops_vnet_to_hub_vnet" {
+#   name                      = "mlops-vnet-to-hub-vnet"
+#   resource_group_name       = var.resource_group_name
+#   virtual_network_name      = azurerm_virtual_network.vnet.name
+#   remote_virtual_network_id = var.exisiting_hub_vnet_id
+# }
 
-// Peer exisitng hub virtual network with mlops virtual network
-resource "azurerm_virtual_network_peering" "hub_vnet_to_mlops_vnet" {  
-  name                      = "hub-vnet-to-mlops-vnet"
-  resource_group_name       = var.exisiting_hub_vnet_resource_group_name
-  virtual_network_name      = var.exisiting_hub_vnet_name
-  remote_virtual_network_id = azurerm_virtual_network.vnet.id
-}
+# // Peer exisitng hub virtual network with mlops virtual network
+# resource "azurerm_virtual_network_peering" "hub_vnet_to_mlops_vnet" {  
+#   name                      = "hub-vnet-to-mlops-vnet"
+#   resource_group_name       = var.exisiting_hub_vnet_resource_group_name
+#   virtual_network_name      = var.exisiting_hub_vnet_name
+#   remote_virtual_network_id = azurerm_virtual_network.vnet.id
+# }
 
 # // Add routetable to route all traffics via via firewall
 # resource "azurerm_route_table" "rt" {

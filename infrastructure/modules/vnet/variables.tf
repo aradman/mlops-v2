@@ -40,9 +40,9 @@ variable "enable_vnet_isolation" {
   default     = true
 }
 
-variable "exisiting_hub_vnet_resource_group_name" {
-  description = "Existing hub virtual network resource group name"
-}
+# variable "exisiting_hub_vnet_resource_group_name" {
+#   description = "Existing hub virtual network resource group name"
+# }
 
 variable "exisiting_hub_vnet_name" {
   description = "Existing hub virtual network name"
@@ -205,6 +205,40 @@ variable "management_subnet" {
 }
 
 variable "bastion_subnet" {
+  type = object({
+    name           = string
+    address_prefix = string
+    network_security_group = object({
+      name   = string
+      rules  = optional(list(object({
+        name                         = string
+        priority                     = number
+        direction                    = string
+        access                       = string
+        protocol                     = string
+        source_address_prefix        = optional(string, "")
+        source_address_prefixes      = optional(list(string), [])
+        source_port_range            = optional(string, "")
+        source_port_ranges           = optional(list(string), [])
+        destination_address_prefix   = optional(string, "")
+        destination_address_prefixes = optional(list(string), [])
+        destination_port_range       = optional(string, "")
+        destination_port_ranges      = optional(list(string), [])
+        description                  = string
+      })))
+    })
+    delegation = list(object({
+      name              = string
+      service_delegation = object({
+        name    = string
+        actions = list(string)
+      })
+    }))
+  })
+  default = null  
+}
+
+variable "runner_subnet" {
   type = object({
     name           = string
     address_prefix = string

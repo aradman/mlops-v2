@@ -3,6 +3,9 @@ name: run-pipeline
 on:
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       parameters-file:
         required: true
         type: string
@@ -21,6 +24,7 @@ on:
 jobs:
   run-pipeline:
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
       - name: checkout
         uses: actions/checkout@v3

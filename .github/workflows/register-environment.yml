@@ -3,6 +3,9 @@ name: register-environment
 on:
   workflow_call:
     inputs:
+      dply_environment:
+        type: string
+        required: true 
       environment_file:
         required: true
         type: string
@@ -26,7 +29,13 @@ on:
 jobs:
   register-environment:
     runs-on: self-hosted
+    environment: ${{ inputs.dply_environment }}
     steps:
+      - name: Get Public IP Address
+        id: get_ip
+        run: echo "::set-output name=ip_address::$(curl -s ifconfig.me)"
+      - name: Display IP Address
+        run: echo "Public IP Address is ${{ steps.get_ip.outputs.ip_address }}"
       - name: checkout
         uses: actions/checkout@v3
       - name: "Az CLI login"

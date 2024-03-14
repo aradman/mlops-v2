@@ -88,6 +88,7 @@ jobs:
   create-tfstate-resources:
     name: Create Resources for Terraform State
     runs-on: ubuntu-latest
+    environment: ${{ inputs.dply_environment }}
     defaults:
       run:
         shell: bash
