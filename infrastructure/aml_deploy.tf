@@ -194,7 +194,8 @@ module "runner" {
 
   runner_subnet_id     = local.virtual_network.runner_subnet_id
   repository           = var.repository
-  access_token      = var.a 
+  access_token         = var.access_token
+  runner_name          = var.runner_name
   # key_vault_id         = local.key_vault.id
 }
 
