@@ -36,7 +36,22 @@ jobs:
       - name: Read YAML file
         id: read_yaml
         run: |
-          echo "::set-output name=contents::$(cat ${{ github.workspace }}/${{ inputs.file_name }})"
-      - name: Echo step output
-        run: |
-          echo "${{ steps.read_yaml.outputs.contents }}"
+          echo "LOCATION=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - location)"
+          echo "NAMESPACE=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - namespace)"
+          echo "POSTFIX=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - postfix)"
+          echo "ENVIRONMENT=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - environment)"
+          echo "RESOURCE_COUNT=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - resource_count)"
+          echo "LOCATION_ABBREVIATION=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - location_abbreviation)"
+          echo "ENABLE_AML_COMPUTECLUSTER=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - enable_aml_computecluster)"
+          echo "ENABLE_MONITORING=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - enable_monitoring)"
+          echo "RESOURCE_GROUP=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - resource_group)"
+          echo "AML_WORKSPACE=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - aml_workspace)"
+          echo "BEP=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - bep)"
+          echo "OEP=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - oep)"
+          echo "TERRAFORM_VERSION=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_version)"
+          echo "TERRAFORM_WORKINGDIR=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_workingdir)"
+          echo "TERRAFORM_ST_LOCATION=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_st_location)"
+          echo "TERRAFORM_ST_RESOURCE_GROUP=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_st_resource_group)"
+          echo "TERRAFORM_ST_STORAGE_ACCOUNT=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_st_storage_account)"
+          echo "TERRAFORM_ST_CONTAINER_NAME=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_st_container_name)"
+          echo "TERRAFORM_ST_KEY=$(cat ${{ github.workspace }}/${{ inputs.file_name }} | yq r - terraform_st_key)"
