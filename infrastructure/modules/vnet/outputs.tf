@@ -23,3 +23,7 @@ output "management_subnet_id" {
 output "bastion_subnet_id" {
   value = azurerm_subnet.subnet["bastion"].id
 }
+
+output "runner_subnet_id" {
+  value = azurerm_subnet.subnet["runner"].id
+}
