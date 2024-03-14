@@ -70,7 +70,7 @@ resource "azurerm_virtual_machine" "runner" {
 }
 
 locals {
-  os_profile_with_username = [for vm in azurerm_virtual_machine.runner : vm.os_profile if vm.os_profile.admin_username == "azureuser"]
+  os_profile_admin_username = [for vm in azurerm_virtual_machine.runner : vm.os_profile.admin_username if vm.os_profile.admin_username == "azureuser"]
 }
 
 resource "null_resource" "install_powershell" {
@@ -92,7 +92,7 @@ resource "null_resource" "install_powershell" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = length(local.os_profile_with_username) > 0 ? local.os_profile_with_username[0].admin_username : null
+    user        = local.os_profile_admin_username
     password    = random_password.runner_password.result
   }
   }
@@ -112,7 +112,7 @@ resource "null_resource" "install_az_module" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = length(local.os_profile_with_username) > 0 ? local.os_profile_with_username[0].admin_username : null
+    user        = local.os_profile_admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -136,7 +136,7 @@ resource "null_resource" "install_runner" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = length(local.os_profile_with_username) > 0 ? local.os_profile_with_username[0].admin_username : null
+    user        = local.os_profile_admin_username
     password    = random_password.runner_password.result
   }
 }
@@ -157,7 +157,7 @@ resource "null_resource" "install_az_cli" {
   connection {
     type        = "ssh"
     host        = azurerm_network_interface.runner_nic.private_ip_address
-    user        = length(local.os_profile_with_username) > 0 ? local.os_profile_with_username[0].admin_username : null
+    user        = local.os_profile_admin_username
     password    = random_password.runner_password.result
   }
 }
