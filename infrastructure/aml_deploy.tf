@@ -26,17 +26,10 @@ module "virtual_network" {
   vnet_cidr = var.vnet_cidr
 
   private_endpoints_subnet = var.private_endpoints_subnet
-  # training_subnet          = var.training_subnet
-  # scoring_subnet           = var.scoring_subnet
   management_subnet        = var.management_subnet
   bastion_subnet           = var.bastion_subnet
   runner_subnet            = var.runner_subnet
   tags                     = local.tags
-
-  # exisiting_hub_vnet_id                  = var.exisiting_hub_vnet_id
-  # exisiting_hub_vnet_name                = var.exisiting_hub_vnet_name
-  # exisiting_hub_vnet_resource_group_name = var.exisiting_hub_vnet_resource_group_name
-  # firewall_private_ip_address            = var.firewall_private_ip_address
 }
 
 # Bastion
