@@ -79,14 +79,14 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "apt-get install docker.io -y"
-      "commandToExecute": "sudo apt-get update"
-      "commandToExecute": "sudo apt-get install -y wget apt-transport-https software-properties-common"
-      "commandToExecute": "wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-      "commandToExecute": "sudo dpkg -i packages-microsoft-prod.deb"
-      "commandToExecute": "sudo apt-get update"
-      "commandToExecute": "sudo add-apt-repository universe"
-      "commandToExecute": "sudo apt-get update"
+      "commandToExecute": "apt-get install docker.io -y",
+      "commandToExecute": "sudo apt-get update",
+      "commandToExecute": "sudo apt-get install -y wget apt-transport-https software-properties-common",
+      "commandToExecute": "wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb",
+      "commandToExecute": "sudo dpkg -i packages-microsoft-prod.deb",
+      "commandToExecute": "sudo apt-get update",
+      "commandToExecute": "sudo add-apt-repository universe",
+      "commandToExecute": "sudo apt-get update",
       "commandToExecute": "sudo apt-get install -y powershell"
     }
 SETTINGS
