@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -31,6 +31,209 @@ variable "env" {
 
 variable "vnet_cidr" {
   type        = string
-  description = "Vitural network CIDR"
-  default     = "10.0.0.0/16"
+  description = "Virtual network CIDR"
+}
+
+variable "enable_vnet_isolation" {
+  description = "Enable or disable vnet isolation"
+  type        = bool
+  default     = true
+}
+
+variable "exisiting_hub_vnet_resource_group_name" {
+  description = "Existing hub virtual network resource group name"
+}
+
+variable "exisiting_hub_vnet_name" {
+  description = "Existing hub virtual network name"
+}
+
+variable "exisiting_hub_vnet_id" {
+  description = "Existing hub virtual network ID"
+}
+
+# variable "firewall_private_ip_address" {
+#   description = "Azure firewall private IP address"
+# }
+
+variable "deploy_management_subnet" {
+  description = "Whether or not to deploy management subnet"
+  type        = bool
+  default     = true
+}
+
+variable "deploy_bastion" {
+  description = "Whether or not to deploy bastion"
+  type        = bool
+  default     = true
+}
+
+variable "private_endpoints_subnet" {
+  type = object({
+    name           = string
+    address_prefix = string
+    network_security_group = object({
+      name   = string
+      rules  = optional(list(object({
+        name                         = string
+        priority                     = number
+        direction                    = string
+        access                       = string
+        protocol                     = string
+        source_address_prefix        = optional(string, "")
+        source_address_prefixes      = optional(list(string), [])
+        source_port_range            = optional(string, "")
+        source_port_ranges           = optional(list(string), [])
+        destination_address_prefix   = optional(string, "")
+        destination_address_prefixes = optional(list(string), [])
+        destination_port_range       = optional(string, "")
+        destination_port_ranges      = optional(list(string), [])
+        description                  = string
+      })))
+    })
+    delegation = list(object({
+      name              = string
+      service_delegation = object({
+        name    = string
+        actions = list(string)
+      })
+    }))
+  })
+
+}
+
+# variable "training_subnet" {
+#   type = object({
+#     name           = string
+#     address_prefix = string
+#     network_security_group = object({
+#       name   = string
+#       rules  = optional(list(object({
+#         name                         = string
+#         priority                     = number
+#         direction                    = string
+#         access                       = string
+#         protocol                     = string
+#         source_address_prefix        = optional(string, "")
+#         source_address_prefixes      = optional(list(string), [])
+#         source_port_range            = optional(string, "")
+#         source_port_ranges           = optional(list(string), [])
+#         destination_address_prefix   = optional(string, "")
+#         destination_address_prefixes = optional(list(string), [])
+#         destination_port_range       = optional(string, "")
+#         destination_port_ranges      = optional(list(string), [])
+#         description                  = string
+#       })))
+#     })
+#     delegation = list(object({
+#       name              = string
+#       service_delegation = object({
+#         name    = string
+#         actions = list(string)
+#       })
+#     }))
+#   })
+  
+# }
+
+# variable "scoring_subnet" {
+#   type = object({
+#     name           = string
+#     address_prefix = string
+#     network_security_group = object({
+#       name   = string
+#       rules  = optional(list(object({
+#         name                         = string
+#         priority                     = number
+#         direction                    = string
+#         access                       = string
+#         protocol                     = string
+#         source_address_prefix        = optional(string, "")
+#         source_address_prefixes      = optional(list(string), [])
+#         source_port_range            = optional(string, "")
+#         source_port_ranges           = optional(list(string), [])
+#         destination_address_prefix   = optional(string, "")
+#         destination_address_prefixes = optional(list(string), [])
+#         destination_port_range       = optional(string, "")
+#         destination_port_ranges      = optional(list(string), [])
+#         description                  = string
+#       })))
+#     })
+#     delegation = list(object({
+#       name              = string
+#       service_delegation = object({
+#         name    = string
+#         actions = list(string)
+#       })
+#     }))
+#   }) 
+  
+# }
+
+variable "management_subnet" {
+  type = object({
+    name           = string
+    address_prefix = string
+    network_security_group = object({
+      name   = string
+      rules  = optional(list(object({
+        name                         = string
+        priority                     = number
+        direction                    = string
+        access                       = string
+        protocol                     = string
+        source_address_prefix        = optional(string, "")
+        source_address_prefixes      = optional(list(string), [])
+        source_port_range            = optional(string, "")
+        source_port_ranges           = optional(list(string), [])
+        destination_address_prefix   = optional(string, "")
+        destination_address_prefixes = optional(list(string), [])
+        destination_port_range       = optional(string, "")
+        destination_port_ranges      = optional(list(string), [])
+        description                  = string
+      })))
+    })
+    delegation = list(object({
+      name              = string
+      service_delegation = object({
+        name    = string
+        actions = list(string)
+      })
+    }))
+  })
+  default = null
+}
+
+variable "bastion_subnet" {
+  type = object({
+    name           = string
+    address_prefix = string
+    network_security_group = object({
+      name   = string
+      rules  = optional(list(object({
+        name                         = string
+        priority                     = number
+        direction                    = string
+        access                       = string
+        protocol                     = string
+        source_address_prefix        = optional(string, "")
+        source_address_prefixes      = optional(list(string), [])
+        source_port_range            = optional(string, "")
+        source_port_ranges           = optional(list(string), [])
+        destination_address_prefix   = optional(string, "")
+        destination_address_prefixes = optional(list(string), [])
+        destination_port_range       = optional(string, "")
+        destination_port_ranges      = optional(list(string), [])
+        description                  = string
+      })))
+    })
+    delegation = list(object({
+      name              = string
+      service_delegation = object({
+        name    = string
+        actions = list(string)
+      })
+    }))
+  })
+  default = null  
 }

@@ -1,7 +1,7 @@
 resource "azurerm_network_interface" "jumphost_nic" {
   name                = "jumphost-nic"
   location            = var.location
-  resource_group_name = var.rg_name
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "configuration"
@@ -11,17 +11,25 @@ resource "azurerm_network_interface" "jumphost_nic" {
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "jumphost_nsg_association" {
-  network_interface_id      = azurerm_network_interface.jumphost_nic.id
-  network_security_group_id = var.management_nsg_id
+resource "random_password" "jumphost_password" {
+  length           = 16
+  lower            = true
+  min_lower        = 1
+  upper            = true
+  min_upper        = 1
+  numeric          = true
+  min_numeric      = 1
+  special          = true
+  min_special      = 1
+  override_special = "_%@"
 }
 
 resource "azurerm_virtual_machine" "jumphost" {
   name                  = "jumphost"
   location              = var.location
-  resource_group_name   = var.rg_name
+  resource_group_name   = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.jumphost_nic.id]
-  vm_size               = "Standard_DS3_v2"
+  vm_size               = "Standard_DS1_v2"
 
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
@@ -36,7 +44,7 @@ resource "azurerm_virtual_machine" "jumphost" {
   os_profile {
     computer_name  = "jumphost"
     admin_username = "azureuser"
-    admin_password = var.jumphost_password
+    admin_password = random_password.jumphost_password.result
   }
 
   os_profile_windows_config {
@@ -54,7 +62,19 @@ resource "azurerm_virtual_machine" "jumphost" {
     create_option     = "FromImage"
     managed_disk_type = "StandardSSD_LRS"
   }
+
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
+
+# resource "azurerm_key_vault_secret" "jumphost_password" {
+#   name         = "jumphost-password"
+#   value        = random_password.jumphost_password.result
+#   key_vault_id = var.key_vault_id
+# }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "jumphost_schedule" {
   virtual_machine_id = azurerm_virtual_machine.jumphost.id
@@ -62,7 +82,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "jumphost_schedule" {
   enabled            = true
 
   daily_recurrence_time = "2000"
-  timezone              = "W. Europe Standard Time"
+  timezone              = "AUS Eastern Standard Time"
 
   notification_settings {
     enabled = false

@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -13,12 +13,7 @@ variable "management_subnet_id" {
   description = "Management subnet id"
 }
 
-variable "management_nsg_id" {
-  type        = string
-  description = "Management nsg id"
-}
-
-variable "jumphost_password" {
-  type        = string
-  description = "Jumphost password"
-}
+# variable "key_vault_id" {
+#   type        = string
+#   description = "Key vault id"
+# }

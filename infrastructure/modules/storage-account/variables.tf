@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -45,11 +45,10 @@ variable "private_dns_zone_file_id" {
   description = "file private dns zone id"
 }
 
-variable "pe_subnet_id" {
+variable "private_endpoints_subnet_id" {
   type        = string
   description = "Private endpoint subnet id"
 }
-
 
 variable "firewall_virtual_network_subnet_ids" {
   default = []
@@ -57,4 +56,10 @@ variable "firewall_virtual_network_subnet_ids" {
 
 variable "firewall_bypass" {
   default = ["None"]
+}
+
+variable "enable_vnet_isolation" {
+  description = "Enable or disable vnet isolation"
+  type        = bool
+  default     = true
 }

@@ -6,20 +6,19 @@ env:
     config_env: 'none'
 jobs:
   get-config:
-      uses: radmanpdev/mlops-templates/.github/workflows/read-yaml.yml@main
+      uses: aradman/mlops-v2/.github/workflows/read-yaml.yml@feature/add-pes
       with:
-        file_name: config-infra-prod.yml
+        file_name: config-infra-dev.yml
   test-terraform-state-deployment:
     needs: get-config
-    uses: radmanpdev/mlops-templates/.github/workflows/tf-gha-install-terraform.yml@main
+    uses: aradman/mlops-v2/.github/workflows/tf-gha-install-terraform.yml@feature/add-pes
     with:
       TFAction: 'apply'
-      dply_environment: ${{ needs.set-env-branch.outputs.config-file }} 
+      dply_environment: dev 
       location: ${{ needs.get-config.outputs.location }}
       namespace: ${{ needs.get-config.outputs.namespace }}
       postfix: ${{ needs.get-config.outputs.postfix }}
       environment: ${{ needs.get-config.outputs.environment }}
-      #vnet_address_space: ${{ needs.get-config.outputs.vnet_cidr }}
       enable_aml_computecluster: ${{ needs.get-config.outputs.enable_aml_computecluster == true }} ## TBD review the evaluation of boolean
       enable_monitoring: ${{ needs.get-config.outputs.enable_monitoring == true  }} ## TBD review the evaluation of boolean
       terraform_version: ${{ needs.get-config.outputs.terraform_version }}
@@ -37,7 +36,7 @@ jobs:
       clientSecret: ${{ secrets.ARM_CLIENT_SECRET }}
       subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       tenantId: ${{ secrets.ARM_TENANT_ID }}
-      jumphostPassword: ${{ secrets.ARM_JUMPHOST_PASSWORD }}
+      accessToken: ${{ secrets.ACCESS_TOKEN }}
   deploy-azureml-resources:
     runs-on: ubuntu-latest
     steps:

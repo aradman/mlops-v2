@@ -6,4 +6,8 @@ locals {
     Toolkit     = "terraform"
     Name        = "${var.prefix}"
   }
+
+  virtual_network = var.enable_vnet_isolation ? module.virtual_network[0] : null
+  private_dns     = var.enable_vnet_isolation ? module.private_dns[0] : null
+  key_vault       = module.key_vault
 }

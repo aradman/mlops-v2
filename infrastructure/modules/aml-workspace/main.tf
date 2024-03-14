@@ -1,16 +1,21 @@
 resource "azurerm_machine_learning_workspace" "mlw" {
-  name                    = "mlw-${var.prefix}-${var.postfix}${var.env}"
-  location                = var.location
-  resource_group_name     = var.rg_name
-  application_insights_id = var.application_insights_id
-  key_vault_id            = var.key_vault_id
-  storage_account_id      = var.storage_account_id
-  container_registry_id   = var.container_registry_id
-
+  name                          = "mlw-${var.prefix}-${var.postfix}${var.env}"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  application_insights_id       = var.application_insights_id
+  key_vault_id                  = var.key_vault_id
+  storage_account_id            = var.storage_account_id
+  container_registry_id         = var.container_registry_id
+  public_network_access_enabled = var.enable_vnet_isolation ? false : true
+  
   sku_name = "Basic"
 
   identity {
     type = "SystemAssigned"
+  }
+
+  managed_network {
+    isolation_mode = "AllowInternetOutbound"
   }
 
   tags = var.tags
@@ -19,14 +24,15 @@ resource "azurerm_machine_learning_workspace" "mlw" {
       tags
     ]
   }
-  
+
 }
 
 resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
+  count               =  var.enable_vnet_isolation ? 1 : 0
   name                = "${azurerm_machine_learning_workspace.mlw.name}-plink"
   location            = var.location
-  resource_group_name = var.rg_name
-  subnet_id           = var.pe_subnet_id
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.private_endpoints_subnet_id
 
   private_service_connection {
     name                           = "${azurerm_machine_learning_workspace.mlw.name}-plink-conn"
@@ -37,7 +43,7 @@ resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
 
   private_dns_zone_group {
     name                 = "privatednszonegroup"
-    private_dns_zone_ids = [var.private_dns_zone_mlw_api_id, var.private_dns_zone_notebook_id ]
+    private_dns_zone_ids = [var.private_dns_zone_mlw_api_id, var.private_dns_zone_notebook_id, var.private_dns_zone_azuremlcert_id]
   }
 
   tags = var.tags
@@ -48,28 +54,29 @@ resource "azurerm_private_endpoint" "mlw_api_private_endpoint_with_dns" {
   }
 }
 
-# Compute cluster
+# # Compute cluster
 
-resource "azurerm_machine_learning_compute_cluster" "adl_aml_ws_compute_cluster" {
-  name                          = "cpu-cluster"
-  location                      = var.location
-  vm_priority                   = "LowPriority"
-  vm_size                       = "Standard_DS3_v2"
-  machine_learning_workspace_id = azurerm_machine_learning_workspace.mlw.id
-  count                         = var.enable_aml_computecluster ? 1 : 0
+# resource "azurerm_machine_learning_compute_cluster" "training_cluster" {
+#   count                         = var.enable_aml_computecluster ? 1 : 0
+#   name                          = var.training_cluster.name
+#   location                      = var.location
+#   vm_priority                   = var.training_cluster.vm_priority
+#   vm_size                       = var.training_cluster.vm_size
+#   machine_learning_workspace_id = azurerm_machine_learning_workspace.mlw.id
+#   subnet_resource_id            = var.enable_vnet_isolation ? var.training_subnet_id : null
 
-  scale_settings {
-    min_node_count                       = 0
-    max_node_count                       = 4
-    scale_down_nodes_after_idle_duration = "PT120S" # 120 seconds
-  }
-}
+#   scale_settings {
+#     min_node_count                       = var.training_cluster.min_nodes
+#     max_node_count                       = var.training_cluster.max_nodes
+#     scale_down_nodes_after_idle_duration = var.training_cluster.scale_down_nodes_after_idle_duration
+#   }
+# }
 
 # # Datastore
 
 # resource "azurerm_resource_group_template_deployment" "arm_aml_create_datastore" {
 #   name                = "arm_aml_create_datastore"
-#   resource_group_name = var.rg_name
+#   resource_group_name = var.resource_group_name
 #   deployment_mode     = "Incremental"
 #   parameters_content = jsonencode({
 #     "WorkspaceName" = {

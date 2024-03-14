@@ -1,4 +1,4 @@
-variable "rg_name" {
+variable "resource_group_name" {
   type        = string
   description = "Resource group name"
 }
@@ -29,12 +29,18 @@ variable "env" {
   description = "Environment prefix"
 }
 
-variable "private_dns_zone_kv_id" {
-  type        = string
-  description = "Keyvault private dns zone id"
+variable "enable_vnet_isolation" {
+  description = "Enable or disable vnet isolation"
+  type        = bool
+  default     = true
 }
 
-variable "pe_subnet_id" {
+# variable "private_dns_zone_kv_id" {
+#   type        = string
+#   description = "Keyvault private dns zone id"
+# }
+
+variable "private_endpoints_subnet_id" {
   type        = string
   description = "Private endpoint subnet id"
 }

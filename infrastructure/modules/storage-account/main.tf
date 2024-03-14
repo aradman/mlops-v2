@@ -10,18 +10,18 @@ locals {
 }
 
 resource "azurerm_storage_account" "st" {
-  name                     = "st${local.safe_prefix}${local.safe_postfix}${var.env}"
-  resource_group_name      = var.rg_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  account_kind             = "StorageV2"
-  is_hns_enabled           = var.hns_enabled
-  public_network_access_enabled   = false
+  name                          = "st${local.safe_prefix}${local.safe_postfix}${var.env}"
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  account_tier                  = "Standard"
+  account_replication_type      = "LRS"
+  account_kind                  = "StorageV2"
+  is_hns_enabled                = var.hns_enabled
+  public_network_access_enabled = var.enable_vnet_isolation ? false : true
 
 
   tags = var.tags
-  
+
 }
 
 # Virtual Network & Firewall configuration
@@ -36,10 +36,11 @@ resource "azurerm_storage_account_network_rules" "firewall_rules" {
 }
 
 resource "azurerm_private_endpoint" "storage_account_blob_private_endpoint_with_dns" {
+  count               = var.enable_vnet_isolation ? 1 : 0
   name                = "${azurerm_storage_account.st.name}-blob-plink"
   location            = var.location
-  resource_group_name = var.rg_name
-  subnet_id           = var.pe_subnet_id
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.private_endpoints_subnet_id
 
   private_service_connection {
     name                           = "${azurerm_storage_account.st.name}-blob-plink-conn"
@@ -62,10 +63,11 @@ resource "azurerm_private_endpoint" "storage_account_blob_private_endpoint_with_
 }
 
 resource "azurerm_private_endpoint" "storage_account_file_private_endpoint_with_dns" {
+  count               = var.enable_vnet_isolation ? 1 : 0
   name                = "${azurerm_storage_account.st.name}-file-plink"
   location            = var.location
-  resource_group_name = var.rg_name
-  subnet_id           = var.pe_subnet_id
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.private_endpoints_subnet_id
 
   private_service_connection {
     name                           = "${azurerm_storage_account.st.name}-file-plink-conn"

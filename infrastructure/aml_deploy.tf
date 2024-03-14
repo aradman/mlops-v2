@@ -7,58 +7,61 @@ module "resource_group" {
 
   prefix  = var.prefix
   postfix = var.postfix
-  env = var.environment
+  env     = var.environment
 
   tags = local.tags
 }
 
 # Virtual Network
-module "virtual_network" {
+module "virtual_network" {  
+  count  = var.enable_vnet_isolation ? 1 : 0
   source = "./modules/vnet"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
-  
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment 
-  vnet_cidr = "10.0.0.0/16"
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
+
+  prefix    = var.prefix
+  postfix   = var.postfix
+  env       = var.environment
+  vnet_cidr = var.vnet_cidr
+
+  private_endpoints_subnet = var.private_endpoints_subnet
+  # training_subnet          = var.training_subnet
+  # scoring_subnet           = var.scoring_subnet
+  management_subnet        = var.management_subnet
+  bastion_subnet           = var.bastion_subnet
+  tags                     = local.tags
+
+  exisiting_hub_vnet_id                  = var.exisiting_hub_vnet_id
+  exisiting_hub_vnet_name                = var.exisiting_hub_vnet_name
+  # exisiting_hub_vnet_resource_group_name = var.exisiting_hub_vnet_resource_group_name
+  # firewall_private_ip_address            = var.firewall_private_ip_address
 }
 
-# Subnets
-module "subnet" {
-  source = "./modules/subnet"
+# Bastion
+module "bastion" {
+  count  = var.enable_vnet_isolation && var.deploy_bastion? 1 : 0
+  source = "./modules/bastion"
 
-  rg_name  = module.resource_group.name
-  vnet_name = module.virtual_network.name
-  pe_subnet_cidr = "10.0.1.0/24"
-  training_subnet_cidr = "10.0.2.0/24"
-  scoring_subnet_cidr = "10.0.3.0/24"
-  management_subnet_cidr = "10.0.4.0/24"
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
+
+  prefix    = var.prefix
+  postfix   = var.postfix
+  env       = var.environment
+   
+  bastion_subnet_id        = local.virtual_network.bastion_subnet_id
+  tags                     = local.tags
 }
 
-# Private endpoint network security group
-
-module "nsg" {
-  source = "./modules/nsg"
-
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
-
-  pe_subnet_id                        = module.subnet.pe_subnet_id
-  training_subnet_id                  = module.subnet.training_subnet_id
-  scoring_subnet_id                   = module.subnet.scoring_subnet_id
-  management_subnet_id                = module.subnet.management_subnet_id
-
-}
 
 # Private DNS
 module "private_dns" {
+  count  = var.enable_vnet_isolation ? 1 : 0
   source = "./modules/private-dns"
 
-  rg_name  = module.resource_group.name
-  vnet_id = module.virtual_network.id
-    
+  resource_group_name = module.resource_group.name
+  vnet_id             = local.virtual_network.id
 }
 
 # Storage account
@@ -66,18 +69,18 @@ module "private_dns" {
 module "storage_account_aml" {
   source = "./modules/storage-account"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
 
   prefix  = var.prefix
   postfix = var.postfix
-  env = var.environment
+  env     = var.environment
 
   hns_enabled                         = false
-  pe_subnet_id                        = module.subnet.pe_subnet_id
-  private_dns_zone_blob_id            = module.private_dns.private_dns_zone_blob_id
-  private_dns_zone_file_id            = module.private_dns.private_dns_zone_file_id
+  private_endpoints_subnet_id         = local.virtual_network.private_endpoints_subnet_id
+  private_dns_zone_blob_id            = local.private_dns.private_dns_zone_blob_id
+  private_dns_zone_file_id            = local.private_dns.private_dns_zone_file_id
   firewall_bypass                     = ["AzureServices"]
   firewall_virtual_network_subnet_ids = []
 
@@ -89,14 +92,14 @@ module "storage_account_aml" {
 module "key_vault" {
   source = "./modules/key-vault"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment
-  pe_subnet_id                        = module.subnet.pe_subnet_id
-  private_dns_zone_kv_id            = module.private_dns.private_dns_zone_kv_id
+  prefix                      = var.prefix
+  postfix                     = var.postfix
+  env                         = var.environment
+  private_endpoints_subnet_id = local.virtual_network.private_endpoints_subnet_id
+  # private_dns_zone_kv_id      = local.private_dns.private_dns_zone_kv_id
 
   tags = local.tags
 }
@@ -106,14 +109,14 @@ module "key_vault" {
 module "container_registry" {
   source = "./modules/container-registry"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
-  prefix  = var.prefix
-  postfix = var.postfix
-  env = var.environment
-  pe_subnet_id                       = module.subnet.pe_subnet_id
-  private_dns_zone_acr_id            = module.private_dns.private_dns_zone_acr_id
+  prefix                      = var.prefix
+  postfix                     = var.postfix
+  env                         = var.environment
+  private_endpoints_subnet_id = local.virtual_network.private_endpoints_subnet_id
+  # private_dns_zone_acr_id     = local.private_dns.private_dns_zone_acr_id
 
   tags = local.tags
 }
@@ -123,12 +126,12 @@ module "container_registry" {
 module "aml_workspace" {
   source = "./modules/aml-workspace"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
   prefix  = var.prefix
   postfix = var.postfix
-  env = var.environment
+  env     = var.environment
 
   storage_account_id      = module.storage_account_aml.id
   key_vault_id            = module.key_vault.id
@@ -136,11 +139,19 @@ module "aml_workspace" {
   container_registry_id   = module.container_registry.id
 
   enable_aml_computecluster = var.enable_aml_computecluster
+  enable_vnet_isolation     = var.enable_vnet_isolation
+
   storage_account_name      = module.storage_account_aml.name
 
-  pe_subnet_id                       = module.subnet.pe_subnet_id
-  private_dns_zone_mlw_api_id            = module.private_dns.private_dns_zone_mlw_api_id
-  private_dns_zone_notebook_id            = module.private_dns.private_dns_zone_notebook_id
+  private_endpoints_subnet_id     = local.virtual_network.private_endpoints_subnet_id
+  private_dns_zone_mlw_api_id     = local.private_dns.private_dns_zone_mlw_api_id
+  private_dns_zone_notebook_id    = local.private_dns.private_dns_zone_notebook_id
+  private_dns_zone_azuremlcert_id = local.private_dns.private_dns_zone_azuremlcert_id
+
+  scoring_cluster    = var.aml_compute_clusters.scoring
+  training_cluster   = var.aml_compute_clusters.training
+  # scoring_subnet_id  = local.virtual_network.scoring_subnet_id
+  # training_subnet_id = local.virtual_network.training_subnet_id
 
   tags = local.tags
 }
@@ -150,35 +161,44 @@ module "aml_workspace" {
 module "application_insights" {
   source = "./modules/application-insights"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
   prefix  = var.prefix
   postfix = var.postfix
-  env = var.environment
+  env     = var.environment
 
   tags = local.tags
 }
 
 # Jumphost
 module "jumphost" {
+  count  = var.enable_vnet_isolation && var.deploy_jumphost ? 1 : 0
   source = "./modules/jumphost"
 
-  rg_name  = module.resource_group.name
-  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
-  management_subnet_id              = module.subnet.management_subnet_id
-  management_nsg_id                 = module.nsg.management_nsg_id
+  management_subnet_id = local.virtual_network.management_subnet_id
+  # key_vault_id         = local.key_vault.id
+}
 
-  jumphost_password                 = var.jumphost_password
+# Jumphost
+module "runner" {
+  count  = var.enable_vnet_isolation ? 1 : 0
+  source = "./modules/runner"
 
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
 
+  runner_subnet_id     = local.virtual_network.runner_subnet_id
+  # key_vault_id         = local.key_vault.id
 }
 
 # module "data_explorer" {
 #   source = "./modules/data-explorer"
 
-#   rg_name  = module.resource_group.name
+#   resource_group_name  = module.resource_group.name
 #   location = module.resource_group.location
 
 #   prefix  = var.prefix

@@ -1,0 +1,42 @@
+name: delete-endpoint
+
+on:
+  workflow_call:
+    inputs:
+      endpoint_file:
+        required: true
+        type: string
+      resource_group:
+        required: true
+        type: string
+      workspace_name:
+        required: true
+        type: string
+      endpoint_name:
+        required: true
+        type: string
+      endpoint_type:
+        required: true
+        type: string
+    secrets:
+      creds:
+        required: true
+jobs:
+  delete-endpoint:
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: "Az CLI login"
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.creds}}
+          enable-AzPSSession: true
+      - name: install-extension
+        run: az extension add -n ml -y
+      - name: update-extension
+        run: az extension update -n ml
+      - name: delete-environment-if-exists
+        run: |
+          ep=$(az ml ${{ inputs.endpoint_type }}-endpoint list --query "[? name== '${{ inputs.endpoint_name }}'].name"  --resource-group ${{ inputs.resource_group }} --workspace-name ${{ inputs.workspace_name }} --output tsv)
+          case "${{ inputs.endpoint_name }}" in $ep)   az ml ${{ inputs.endpoint_type }}-endpoint delete --name ${{ inputs.endpoint_name }} --resource-group ${{ inputs.resource_group }} --workspace-name ${{ inputs.workspace_name }} --yes -y ;;  *) echo "no workspace to delete";;esac
