@@ -36,9 +36,6 @@ jobs:
       - name: Read YAML file
         id: read_yaml
         run: |
-          echo "::set-output name=contents::$(cat ${{ github.workspace }}/${{ inputs.file_name }})"
-      - name: Set output
-        run: |
           echo "location=${{ steps.read_yaml.outputs.contents.location }}" >> $GITHUB_OUTPUT
           echo "namespace=${{ steps.read_yaml.outputs.contents.namespace }}" >> $GITHUB_OUTPUT
           echo "postfix=${{ steps.read_yaml.outputs.contents.postfix }}" >> $GITHUB_OUTPUT
