@@ -68,8 +68,17 @@ resource "azurerm_virtual_machine" "runner" {
     ]
   }
 
+}
+
+resource "azurerm_virtual_machine_extension" "custom_script" {
+  name                 = "customScript"
+  virtual_machine_id   = azurerm_virtual_machine.runner.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.1"
+
   settings = <<SETTINGS
-  {
+    {
       "commandToExecute": "apt-get install docker.io -y"
       "commandToExecute": "sudo apt-get update"
       "commandToExecute": "sudo apt-get install -y wget apt-transport-https software-properties-common"
@@ -79,9 +88,10 @@ resource "azurerm_virtual_machine" "runner" {
       "commandToExecute": "sudo add-apt-repository universe"
       "commandToExecute": "sudo apt-get update"
       "commandToExecute": "sudo apt-get install -y powershell"
-  }
-  SETTINGS
+    }
+SETTINGS
 }
+
 
 # resource "null_resource" "install_powershell" {
 #   depends_on = [
