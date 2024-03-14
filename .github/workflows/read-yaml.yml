@@ -30,28 +30,30 @@ jobs:
       terraform_st_storage_account: ${{ steps.read_yaml.outputs.terraform_st_storage_account }}
       terraform_st_container_name: ${{ steps.read_yaml.outputs.terraform_st_container_name }}
       terraform_st_key: ${{ steps.read_yaml.outputs.terraform_st_key }}
+
     steps:
       - name: Checking out repo
         uses: actions/checkout@v3
+
       - name: Read YAML file
         id: read_yaml
         run: |
-          echo "location=${{ steps.read_yaml.outputs.contents.location }}" >> $GITHUB_OUTPUT
-          echo "namespace=${{ steps.read_yaml.outputs.contents.namespace }}" >> $GITHUB_OUTPUT
-          echo "postfix=${{ steps.read_yaml.outputs.contents.postfix }}" >> $GITHUB_OUTPUT
-          echo "environment=${{ steps.read_yaml.outputs.contents.environment }}" >> $GITHUB_OUTPUT
-          echo "resource_count=${{ steps.read_yaml.outputs.contents.resource_count }}" >> $GITHUB_OUTPUT
-          echo "location_abbreviation=${{ steps.read_yaml.outputs.contents.location_abbreviation }}" >> $GITHUB_OUTPUT
-          echo "enable_aml_computecluster=${{ steps.read_yaml.outputs.contents.enable_aml_computecluster }}" >> $GITHUB_OUTPUT
-          echo "enable_monitoring=${{ steps.read_yaml.outputs.contents.enable_monitoring }}" >> $GITHUB_OUTPUT
-          echo "resource_group=${{ steps.read_yaml.outputs.contents.resource_group }}" >> $GITHUB_OUTPUT
-          echo "aml_workspace=${{ steps.read_yaml.outputs.contents.aml_workspace }}" >> $GITHUB_OUTPUT
-          echo "bep=${{ steps.read_yaml.outputs.contents.bep }}" >> $GITHUB_OUTPUT
-          echo "oep=${{ steps.read_yaml.outputs.contents.oep }}" >> $GITHUB_OUTPUT
-          echo "terraform_version=${{ steps.read_yaml.outputs.contents.terraform_version }}" >> $GITHUB_OUTPUT
-          echo "terraform_workingdir=${{ steps.read_yaml.outputs.contents.terraform_workingdir }}" >> $GITHUB_OUTPUT
-          echo "terraform_st_location=${{ steps.read_yaml.outputs.contents.terraform_st_location }}" >> $GITHUB_OUTPUT
-          echo "terraform_st_resource_group=${{ steps.read_yaml.outputs.contents.terraform_st_resource_group }}" >> $GITHUB_OUTPUT
-          echo "terraform_st_storage_account=${{ steps.read_yaml.outputs.contents.terraform_st_storage_account }}" >> $GITHUB_OUTPUT
-          echo "terraform_st_container_name=${{ steps.read_yaml.outputs.contents.terraform_st_container_name }}" >> $GITHUB_OUTPUT
-          echo "terraform_st_key=${{ steps.read_yaml.outputs.contents.terraform_st_key }}" >> $GITHUB_OUTPUT
+          echo "location=$(yq e '.location' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "namespace=$(yq e '.namespace' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "postfix=$(yq e '.postfix' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "environment=$(yq e '.environment' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "resource_count=$(yq e '.resource_count' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "location_abbreviation=$(yq e '.location_abbreviation' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "enable_aml_computecluster=$(yq e '.enable_aml_computecluster' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "enable_monitoring=$(yq e '.enable_monitoring' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "resource_group=$(yq e '.resource_group' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "aml_workspace=$(yq e '.aml_workspace' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "bep=$(yq e '.bep' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "oep=$(yq e '.oep' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_version=$(yq e '.terraform_version' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_workingdir=$(yq e '.terraform_workingdir' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_st_location=$(yq e '.terraform_st_location' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_st_resource_group=$(yq e '.terraform_st_resource_group' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_st_storage_account=$(yq e '.terraform_st_storage_account' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_st_container_name=$(yq e '.terraform_st_container_name' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
+          echo "terraform_st_key=$(yq e '.terraform_st_key' ${{ github.workspace }}/${{ inputs.file_name }})" >> $GITHUB_ENV
