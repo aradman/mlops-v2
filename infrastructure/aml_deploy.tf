@@ -13,7 +13,7 @@ module "resource_group" {
 }
 
 # Virtual Network
-module "virtual_network" {  
+module "virtual_network" {
   count  = var.enable_vnet_isolation ? 1 : 0
   source = "./modules/vnet"
 
@@ -34,18 +34,18 @@ module "virtual_network" {
 
 # Bastion
 module "bastion" {
-  count  = var.enable_vnet_isolation && var.deploy_bastion? 1 : 0
+  count  = var.enable_vnet_isolation && var.deploy_bastion ? 1 : 0
   source = "./modules/bastion"
 
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
 
-  prefix    = var.prefix
-  postfix   = var.postfix
-  env       = var.environment
-   
-  bastion_subnet_id        = local.virtual_network.bastion_subnet_id
-  tags                     = local.tags
+  prefix  = var.prefix
+  postfix = var.postfix
+  env     = var.environment
+
+  bastion_subnet_id = local.virtual_network.bastion_subnet_id
+  tags              = local.tags
 }
 
 
@@ -135,15 +135,15 @@ module "aml_workspace" {
   enable_aml_computecluster = var.enable_aml_computecluster
   enable_vnet_isolation     = var.enable_vnet_isolation
 
-  storage_account_name      = module.storage_account_aml.name
+  storage_account_name = module.storage_account_aml.name
 
   private_endpoints_subnet_id     = local.virtual_network.private_endpoints_subnet_id
   private_dns_zone_mlw_api_id     = local.private_dns.private_dns_zone_mlw_api_id
   private_dns_zone_notebook_id    = local.private_dns.private_dns_zone_notebook_id
   private_dns_zone_azuremlcert_id = local.private_dns.private_dns_zone_azuremlcert_id
 
-  scoring_cluster    = var.aml_compute_clusters.scoring
-  training_cluster   = var.aml_compute_clusters.training
+  scoring_cluster  = var.aml_compute_clusters.scoring
+  training_cluster = var.aml_compute_clusters.training
   # scoring_subnet_id  = local.virtual_network.scoring_subnet_id
   # training_subnet_id = local.virtual_network.training_subnet_id
 
@@ -177,20 +177,20 @@ module "jumphost" {
   # key_vault_id         = local.key_vault.id
 }
 
-# Jumphost
-module "runner" {
-  count  = var.enable_vnet_isolation ? 1 : 0
-  source = "./modules/runner"
+# # Jumphost
+# module "runner" {
+#   count  = var.enable_vnet_isolation ? 1 : 0
+#   source = "./modules/runner"
 
-  resource_group_name = module.resource_group.name
-  location            = module.resource_group.location
+#   resource_group_name = module.resource_group.name
+#   location            = module.resource_group.location
 
-  runner_subnet_id     = local.virtual_network.runner_subnet_id
-  repository           = var.repository
-  access_token         = var.access_token
-  runner_name          = var.runner_name
-  # key_vault_id         = local.key_vault.id
-}
+#   runner_subnet_id     = local.virtual_network.runner_subnet_id
+#   repository           = var.repository
+#   access_token         = var.access_token
+#   runner_name          = var.runner_name
+#   # key_vault_id         = local.key_vault.id
+# }
 
 # module "data_explorer" {
 #   source = "./modules/data-explorer"
